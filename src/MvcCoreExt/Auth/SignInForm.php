@@ -36,7 +36,7 @@ class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
 			'name'			=> 'password',
 			'placeholder'	=> 'Password',
 		)));
-		$this->AddField(new App_Forms_Fields_Submit(array(
+		$this->AddField(new SimpleForm_SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Sign In',
 			'cssClasses'	=> array('button'),
@@ -63,20 +63,21 @@ class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
+		$userClass = MvcCoreExt_Auth::GetInstance()->GetConfig()->userClass;
 		if ($this->Result === SimpleForm::RESULT_SUCCESS) {
 			// now sended values are safe strings, 
 			// try to get use by username and compare password hashes:
-			$user = MvcCoreExt_Auth_User::Authenticate(
+			$user = $userClass::Authenticate(
 				$this->Data['username'], $this->Data['password']
 			);
 			if (is_null($user)) {
 				$this->AddError('User name or password is incorrect.');
 			} else {
-				MvcCoreExt_Auth_User::StoreInSession($user);
+				$userClass::StoreInSession($user);
 			}
 		}
 		$data = (object) $this->Data;
-		$this->SuccessUrl = $data->sourceUrl ? $data->sourceUrl : $data->successUrl;
+		$this->SuccessUrl = $data->sourceUrl ? urldecode($data->sourceUrl) : $data->successUrl;
 		$this->ErrorUrl = $data->errorUrl;
 		if ($this->Result !== SimpleForm::RESULT_SUCCESS) {
 			sleep(3);

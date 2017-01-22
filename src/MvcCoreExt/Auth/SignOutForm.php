@@ -30,7 +30,7 @@ class MvcCoreExt_Auth_SignOutForm extends MvcCoreExt_Auth_Abstract_Form {
 		$cfg = MvcCoreExt_Auth::GetInstance()->GetConfig();
 		$this->addSuccessAndErrorUrlHiddens($cfg->signedInUrl, $cfg->errorUrl);
 
-		$this->AddField(new App_Forms_Fields_Submit(array(
+		$this->AddField(new SimpleForm_SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Log Out',
 			'cssClasses'	=> array('button'),
@@ -50,7 +50,8 @@ class MvcCoreExt_Auth_SignOutForm extends MvcCoreExt_Auth_Abstract_Form {
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
 		if ($this->Result === SimpleForm::RESULT_SUCCESS) {
-			MvcCoreExt_Auth_User::ClearFromSession();
+			$userClass = MvcCoreExt_Auth::GetInstance()->GetConfig()->userClass;
+			$userClass::ClearFromSession();
 		}
 		$this->SuccessUrl = $this->Data['successUrl'];
 		$this->ErrorUrl = $this->Data['errorUrl'];

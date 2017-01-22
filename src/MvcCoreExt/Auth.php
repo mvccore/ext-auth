@@ -262,7 +262,8 @@ class MvcCoreExt_Auth {
 	 */
 	public function & GetUser () {
 		if (!$this->userInitialized && is_null($this->user)) {
-			$this->user = MvcCoreExt_Auth_User::GetUserBySession();
+			$userClass = $this->config->userClass;
+			$this->user = $userClass::GetUserBySession();
 			$this->userInitialized = TRUE;
 		}
 		return $this->user;
@@ -381,13 +382,13 @@ class MvcCoreExt_Auth {
 		$authenticated = $this->IsAuthenticated();
 		if (!$authenticated && is_string($this->config->signInRoute)) {
 			$this->config->signInRoute = MvcCore_Route::GetInstance(array(
-				'name'		=> "$authControllerClass::SignIn",
+				'name'		=> "$authControllerClass:SignIn",
 				'pattern'	=> $this->config->signInRoute,
 			));
 		}
 		if ($authenticated && is_string($this->config->signOutRoute)) {
 			$this->config->signOutRoute = MvcCore_Route::GetInstance(array(
-				'name'		=> "$authControllerClass::SignOut",
+				'name'		=> "$authControllerClass:SignOut",
 				'pattern'	=> $this->config->signOutRoute,
 			));
 		}
