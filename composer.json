@@ -44,5 +44,5 @@
 	"autoload": {
 		"classmap": ["src/"]
 	},
-	"minimum-stability": "master-dev"
+	"minimum-stability": "dev"
 }
