@@ -37,9 +37,7 @@
 		"mvccore/ext-form": "^3.2"
 	},
 	"require-dev": {
-		"php": ">=5.3.0",
-		"mvccore/mvccore": "@dev",
-		"mvccore/ext-form": "@dev"
+		"php": ">=5.3.0"
 	},
 	"autoload": {
 		"classmap": ["src/"]
