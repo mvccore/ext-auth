@@ -8,35 +8,40 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_SignOutForm extends MvcCoreExt_Auth_Abstract_Form {
+namespace MvcCore\Ext\Auth;
+
+use \MvcCore\Ext\Auth,
+	\MvcCore\Ext\Form;
+
+class SignOutForm extends Virtual\Form {
 
 	/** @var string */
 	public $CssClass = 'sign-out';
 
-	/** @var MvcCoreExt_Auth_Abstract_User */
+	/** @var \MvcCore\Ext\Auth\Virtual\User */
 	public $User = NULL;
 
 	/**
 	 * Initialize sign out button and user into 
 	 * template for any custom template rendering.
-	 * @return MvcCoreExt_Auth_SignOutForm
+	 * @return \MvcCore\Ext\Auth\SignOutForm
 	 */
 	public function Init () {
 		parent::Init();
 
-		$cfg = MvcCoreExt_Auth::GetInstance()->GetConfig();
+		$cfg = Auth::GetInstance()->GetConfig();
 		$this->addSuccessAndErrorUrlHiddens($cfg->signedInUrl, $cfg->errorUrl);
 
-		$this->AddField(new SimpleForm_SubmitButton(array(
+		$this->AddField(new Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Log Out',
 			'cssClasses'	=> array('button'),
 		)));
 
-		$this->User = MvcCoreExt_Auth::GetInstance()->GetUser();
+		$this->User = Auth::GetInstance()->GetUser();
 
 		return $this;
 	}
@@ -49,8 +54,8 @@ class MvcCoreExt_Auth_SignOutForm extends MvcCoreExt_Auth_Abstract_Form {
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		if ($this->Result === SimpleForm::RESULT_SUCCESS) {
-			$userClass = MvcCoreExt_Auth::GetInstance()->GetConfig()->userClass;
+		if ($this->Result === Form::RESULT_SUCCESS) {
+			$userClass = Auth::GetInstance()->GetConfig()->userClass;
 			$userClass::ClearFromSession();
 		}
 		$this->SuccessUrl = $this->Data['successUrl'];

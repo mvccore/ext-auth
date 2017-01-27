@@ -8,10 +8,12 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_Abstract_User extends MvcCore_Model {
+namespace MvcCore\Ext\Auth\Virtual;
+
+class User extends \MvcCore\Model {
 
 	/** @var int */
 	public $Id = NULL;
@@ -29,7 +31,7 @@ class MvcCoreExt_Auth_Abstract_User extends MvcCore_Model {
 	 * Try to get user model instance from
 	 * any place by session username record
 	 * if there is any or return null.
-	 * @return MvcCoreExt_Auth_User|null
+	 * @return \MvcCore\Ext\Auth\User|null
 	 */
 	public static function GetUserBySession () {
 		return NULL;
@@ -39,7 +41,7 @@ class MvcCoreExt_Auth_Abstract_User extends MvcCore_Model {
 	 * Get user instance if the username exists and hashed password is the same
 	 * @param string $username
 	 * @param string $password
-	 * @return MvcCoreExt_Auth_User|null
+	 * @return \MvcCore\Ext\Auth\User|null
 	 */
 	public static function Authenticate ($username = '', $password = '') {
 		return NULL;
@@ -68,7 +70,7 @@ class MvcCoreExt_Auth_Abstract_User extends MvcCore_Model {
 	public static function GetPasswordHash ($password = '') {
 		return sha1(crypt(
 			(string) $password, 
-			MvcCoreExt_Auth::GetInstance()->GetConfig()->passwordHashSalt /*. $_SERVER['SERVER_NAME']*/
+			\MvcCore\Ext\Auth::GetInstance()->GetConfig()->passwordHashSalt /*. $_SERVER['SERVER_NAME']*/
 		));
 	}
 }

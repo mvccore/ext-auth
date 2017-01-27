@@ -8,21 +8,23 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_Controller extends MvcCoreExt_Auth_Abstract_Controller {
+namespace MvcCore\Ext\Auth;
+
+class Controller extends Virtual\Controller {
 	/**
 	 * Authentication form submit action to sign in.
 	 * Routed by route configured by:
-	 * MvcCoreExt_Auth::GetInstance()->SetSignInRoute();
+	 * MvcCore\Ext\Auth::GetInstance()->SetSignInRoute();
 	 * @return void
 	 */
 	public function SignInAction () {
-		/** @var $form MvcCoreExt_Auth_SignInForm */ 
-		$form = MvcCoreExt_Auth::GetInstance()->GetForm();
+		/** @var $form \MvcCore\Ext\Auth\SignInForm */
+		$form = \MvcCore\Ext\Auth::GetInstance()->GetForm();
 		list ($result, $data, $errors) = $form->Submit();
-		if ($result !== SimpleForm::RESULT_SUCCESS) {
+		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
 			// here you can count bad login requests 
 			// to ban danger user for some time or anything else...
 
@@ -33,13 +35,13 @@ class MvcCoreExt_Auth_Controller extends MvcCoreExt_Auth_Abstract_Controller {
 	/**
 	 * Authentication form submit action to sign out.
 	 * Routed by route configured by: 
-	 * MvcCoreExt_Auth::GetInstance()->SetSignOutRoute();
+	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
 	 * @return void
 	 */
 	public function SignOutAction () {
-		/** @var $form MvcCoreExt_Auth_SignOutForm */
-		$form = MvcCoreExt_Auth::GetInstance()->GetForm();
-		list ($result, $data, $errors) = $form->Submit();
+		/** @var $form \MvcCore\Ext\Auth\SignOutForm */
+		$form = \MvcCore\Ext\Auth::GetInstance()->GetForm();
+		/*list ($result, $data, $errors) = */$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();
 	}

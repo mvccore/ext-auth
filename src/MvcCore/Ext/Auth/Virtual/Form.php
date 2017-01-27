@@ -8,10 +8,12 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_Abstract_Form extends SimpleForm {
+namespace MvcCore\Ext\Auth\Virtual;
+
+class Form extends \MvcCore\Ext\Form {
 
 	/**
 	 * Unique form id.
@@ -23,7 +25,7 @@ class MvcCoreExt_Auth_Abstract_Form extends SimpleForm {
 	 * Form http method.
 	 * @var string
 	 */
-	public $Method = SimpleForm::METHOD_POST;
+	public $Method = \MvcCore\Ext\Form::METHOD_POST;
 
 	/**
 	 * For sign in form:
@@ -33,8 +35,8 @@ class MvcCoreExt_Auth_Abstract_Form extends SimpleForm {
 	 * For sign out form:
 	 * - initialize sign out button and user into
 	 *   template for any custom template rendering.
-	 * @throws SimpleForm_Core_Exception
-	 * @return MvcCoreExt_Auth_Abstract_SignForm
+	 * @throws \MvcCore\Ext\Form\Core\Exception
+	 * @return \MvcCore\Ext\Auth\Virtual\Form|\MvcCore\Ext\Form
 	 */
 	public function Init () {
 		return parent::Init();
@@ -63,12 +65,12 @@ class MvcCoreExt_Auth_Abstract_Form extends SimpleForm {
 	 * @param string $errorUrl
 	 */
 	protected function addSuccessAndErrorUrlHiddens ($successUrl = '', $errorUrl = '') {
-		$this->AddField(new SimpleForm_Hidden(array(
+		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'successUrl',
 			'value'			=> $successUrl,
 			'validators'	=> array('Url'),
 		)));
-		$this->AddField(new SimpleForm_Hidden(array(
+		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'errorUrl',
 			'value'			=> $errorUrl,
 			'validators'	=> array('Url'),

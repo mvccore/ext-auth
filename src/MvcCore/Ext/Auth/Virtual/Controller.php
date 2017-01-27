@@ -8,14 +8,16 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_Abstract_Controller extends MvcCore_Controller {
+namespace MvcCore\Ext\Auth\Virtual;
+
+class Controller extends \MvcCore\Controller {
 	/**
 	 * Authentication form submit action to sign in.
 	 * Routed by route configured by:
-	 * MvcCoreExt_Auth::GetInstance()->SetSignInRoute();
+	 * MvcCore\Ext\Auth::GetInstance()->SetSignInRoute();
 	 * @return void
 	 */
 	public function SignInAction () {
@@ -23,7 +25,7 @@ class MvcCoreExt_Auth_Abstract_Controller extends MvcCore_Controller {
 	/**
 	 * Authentication form submit action to sign out.
 	 * Routed by route configured by:
-	 * MvcCoreExt_Auth::GetInstance()->SetSignOutRoute();
+	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
 	 * @return void
 	 */
 	public function SignOutAction () {

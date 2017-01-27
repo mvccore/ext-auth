@@ -8,10 +8,15 @@
  * the LICENSE.md file that are distributed with this source code.
  *
  * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/3.0.0/LICENCE.md
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
+namespace MvcCore\Ext\Auth;
+
+use \MvcCore\Ext\Auth,
+	\MvcCore\Ext\Form;
+
+class SignInForm extends Virtual\Form {
 
 	/** @var string */
 	public $CssClass = 'sign-in';
@@ -20,33 +25,33 @@ class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
 	 * Initialize all form fields, initialize hidden field with
 	 * sourceUrl for cases when in request params is any source url param.
 	 * To return there after form is submitted.
-	 * @return MvcCoreExt_Auth_SignInForm
+	 * @return \MvcCore\Ext\Auth\SignInForm
 	 */
 	public function Init () {
 		parent::Init();
-		
-		$cfg = MvcCoreExt_Auth::GetInstance()->GetConfig();
+
+		$cfg = Auth::GetInstance()->GetConfig();
 		$this->addSuccessAndErrorUrlHiddens($cfg->signedInUrl, $cfg->errorUrl);
 
-		$this->AddField(new SimpleForm_Text(array(
+		$this->AddField(new Form\Text(array(
 			'name'			=> 'username',
 			'placeholder'	=> 'User',
 		)));
-		$this->AddField(new SimpleForm_Password(array(
+		$this->AddField(new Form\Password(array(
 			'name'			=> 'password',
 			'placeholder'	=> 'Password',
 		)));
-		$this->AddField(new SimpleForm_SubmitButton(array(
+		$this->AddField(new Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Sign In',
 			'cssClasses'	=> array('button'),
 		)));
 
-		$params = MvcCore::GetInstance()->GetRequest()->Params;
+		$params = \MvcCore::GetInstance()->GetRequest()->Params;
 
 		$sourceUrl = isset($params['sourceUrl']) ? $params['sourceUrl'] : '' ;
 		$sourceUrl = filter_var($sourceUrl, FILTER_VALIDATE_URL);
-		$this->AddField(new SimpleForm_Hidden(array(
+		$this->AddField(new Form\Hidden(array(
 			'name'			=> 'sourceUrl',
 			'value'			=> $sourceUrl,
 		)));
@@ -63,8 +68,8 @@ class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		$userClass = MvcCoreExt_Auth::GetInstance()->GetConfig()->userClass;
-		if ($this->Result === SimpleForm::RESULT_SUCCESS) {
+		$userClass = Auth::GetInstance()->GetConfig()->userClass;
+		if ($this->Result === Form::RESULT_SUCCESS) {
 			// now sended values are safe strings, 
 			// try to get use by username and compare password hashes:
 			$user = $userClass::Authenticate(
@@ -79,7 +84,7 @@ class MvcCoreExt_Auth_SignInForm extends MvcCoreExt_Auth_Abstract_Form {
 		$data = (object) $this->Data;
 		$this->SuccessUrl = $data->sourceUrl ? urldecode($data->sourceUrl) : $data->successUrl;
 		$this->ErrorUrl = $data->errorUrl;
-		if ($this->Result !== SimpleForm::RESULT_SUCCESS) {
+		if ($this->Result !== Form::RESULT_SUCCESS) {
 			sleep(3);
 		}
 		return array($this->Result, $this->Data, $this->Errors);

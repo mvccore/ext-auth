@@ -1,7 +1,29 @@
 {
 	"name": "mvccore/ext-auth",
-	"description": "Simple authentication service, only to signin/signout an user. Service use  credentials defined in system config.ini by default. Service is very easy to extend and configure for new user model class to authenticate the user by any database credentials or anything else and the same is possible for sign in/out controller or form class to use any registration implementation you need.",
-	"keywords": ["mvccore", "framework", "mvc", "auth", "ext", "extension", "authentication", "authorization", "authenticate", "user", "signin", "signout", "login", "logout"],
+	"type": "library",
+	"description": "MvcCore Extension - Auth - simple authentication service, only to signin/signout an user. Service use  credentials defined in system config.ini by default. Service is very easy to extend and configure for new user model class to authenticate the user by any database credentials or anything else and the same is possible for sign in/out controller or form class to use any registration implementation you need.",
+	"keywords": [
+		"mvc", 
+		"mvccore", 
+		"framework", 
+		"extension", 
+		"plugin", 
+		"plug-in", 
+		"ext", 
+		"auth", 
+		"authentication", 
+		"authorization", 
+		"authenticate", 
+		"user", 
+		"signin", 
+		"signout", 
+		"login", 
+		"logout", 
+		"sign in", 
+		"sign out", 
+		"log in", 
+		"log out"
+	],
 	"license": ["BSD-3-Clause"],
 	"authors": [
 		{
@@ -11,8 +33,8 @@
 	],
 	"require": {
 		"php": ">=5.3.0",
-		"mvccore/mvccore": "^3.0",
-		"mvccore/simpleform": "^3.0"
+		"mvccore/mvccore": "dev-master",
+		"mvccore/ext-form": "dev-master"
 	},
 	"autoload": {
 		"classmap": ["src/"]
