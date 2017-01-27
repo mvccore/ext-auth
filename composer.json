@@ -38,8 +38,8 @@
 	},
 	"require-dev": {
 		"php": ">=5.3.0",
-		"mvccore/mvccore": "^3.2@dev",
-		"mvccore/ext-form": "^3.2@dev"
+		"mvccore/mvccore": "*@dev",
+		"mvccore/ext-form": "*@dev"
 	},
 	"autoload": {
 		"classmap": ["src/"]
