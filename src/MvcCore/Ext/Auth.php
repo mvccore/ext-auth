@@ -19,7 +19,7 @@ class Auth {
 	 * Comparation by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
-	const VERSION = '4.0.0';
+	const VERSION = '4.1.0';
 	/**
 	 * Singleton instance of authentication extension service.
 	 * @var \MvcCore\Ext\Auth
