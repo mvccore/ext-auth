@@ -96,7 +96,7 @@ class User extends Virtual\User {
 	 */
 	protected static function & getSession () {
 		if (is_null(static::$session)) {
-			\MvcCore::SessionStart(); // start session if not started or do nothing if session has been started already
+			\MvcCore\Application::GetInstance()->SessionStart(); // start session if not started or do nothing if session has been started already
 			static::$session = \MvcCore\Session::GetNamespace(__CLASS__);
 			static::$session->SetExpirationSeconds(
 				\MvcCore\Ext\Auth::GetInstance()->GetConfig()->expirationSeconds

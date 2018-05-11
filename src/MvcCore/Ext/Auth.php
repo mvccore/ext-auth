@@ -19,7 +19,7 @@ class Auth {
 	 * Comparation by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
-	const VERSION = '4.3.1';
+	const VERSION = '5.0.0-alpha';
 	/**
 	 * Singleton instance of authentication extension service.
 	 * @var \MvcCore\Ext\Auth
@@ -300,14 +300,14 @@ class Auth {
 	 */
 	public function & GetForm () {
 		if (is_null($this->form)) {
-			$controller = \MvcCore::GetInstance()->GetController();
+			$controller = \MvcCore\Application::GetInstance()->GetController();
 			if ($this->IsAuthenticated()) {
 				$this->form = new \MvcCore\Ext\Auth\SignOutForm($controller);
-				$this->form->Action = \MvcCore::GetInstance()->Url($this->config->signOutRoute->Name);
+				$this->form->Action = \MvcCore\Application::GetInstance()->Url($this->config->signOutRoute->GetName());
 				$this->form->SuccessUrl = $this->config->signedOutUrl;
 			} else {
 				$this->form = new \MvcCore\Ext\Auth\SignInForm($controller);
-				$this->form->Action = \MvcCore::GetInstance()->Url($this->config->signInRoute->Name);
+				$this->form->Action = \MvcCore\Application::GetInstance()->Url($this->config->signInRoute->GetName());
 				$this->form->SuccessUrl = $this->config->signedInUrl;
 			}
 			$this->form->ErrorUrl = $this->config->errorUrl;
@@ -334,7 +334,7 @@ class Auth {
 	 */
 	public function Init () {
 		// add sing in or sing out forms routes, complete form success and error addresses
-		\MvcCore::AddPreRouteHandler(function (\MvcCore\Request & $request) {
+		\MvcCore\Application::GetInstance()->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) {
 			$this->PrepareHandler($request);
 		});
 		return $this;
@@ -409,7 +409,7 @@ class Auth {
 	 * @return void
 	 */
 	public function PrepareAdresses () {
-		$request = & \MvcCore::GetInstance()->GetRequest();
+		$request = & \MvcCore\Application::GetInstance()->GetRequest();
 		if (!$this->config->signedInUrl)	$this->config->signedInUrl = $request->FullUrl;
 		if (!$this->config->signedOutUrl)	$this->config->signedOutUrl = $request->FullUrl;
 		if (!$this->config->errorUrl)		$this->config->errorUrl = $request->FullUrl;

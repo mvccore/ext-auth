@@ -47,7 +47,7 @@ class SignInForm extends Virtual\Form {
 			'cssClasses'	=> array('button'),
 		)));
 
-		$params = \MvcCore::GetInstance()->GetRequest()->Params;
+		$params = \MvcCore\Application::GetInstance()->GetRequest()->GetParams();
 
 		$sourceUrl = isset($params['sourceUrl']) ? $params['sourceUrl'] : '' ;
 		$sourceUrl = filter_var($sourceUrl, FILTER_VALIDATE_URL);
