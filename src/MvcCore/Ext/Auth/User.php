@@ -22,8 +22,8 @@ class User extends Virtual\User {
 	protected static $session = NULL;
 
 	/**
-	 * Try to get user model instance from 
-	 * any place by session username record 
+	 * Try to get user model instance from
+	 * any place by session username record
 	 * if there is any or return null.
 	 * @return \MvcCore\Ext\Auth\User|null
 	 */
@@ -49,7 +49,7 @@ class User extends Virtual\User {
 	/**
 	 * Get user instance if the username exists and hashed password is the same
 	 * @param string $username
-	 * @param string $password 
+	 * @param string $password
 	 * @return \MvcCore\Ext\Auth\User|null
 	 */
 	public static function Authenticate ($uniqueUserName = '', $password = '') {
@@ -96,8 +96,10 @@ class User extends Virtual\User {
 	 */
 	protected static function & getSession () {
 		if (is_null(static::$session)) {
-			\MvcCore\Application::GetInstance()->SessionStart(); // start session if not started or do nothing if session has been started already
-			static::$session = \MvcCore\Session::GetNamespace(__CLASS__);
+			$app = \MvcCore\Application::GetInstance();
+			$app->SessionStart(); // start session if not started or do nothing if session has been started already
+			$sessionClass = $app->GetSessionClass();
+			static::$session = $sessionClass::GetNamespace(__CLASS__);
 			static::$session->SetExpirationSeconds(
 				\MvcCore\Ext\Auth::GetInstance()->GetConfig()->expirationSeconds
 			);

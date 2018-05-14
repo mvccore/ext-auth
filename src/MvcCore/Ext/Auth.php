@@ -52,8 +52,8 @@ class Auth {
 		'signedInUrl'		=> '',
 		'signedOutUrl'		=> '',
 		'errorUrl'			=> '',
-		'signInRoute'		=> "#^/signin#",
-		'signOutRoute'		=> "#^/signout#",
+		'signInRoute'		=> array('match' => '#^/signin#', 'reverse' => '/signin'),
+		'signOutRoute'		=> array('match' => '#^/signout#', 'reverse' => '/signout'),
 		'passwordHashSalt'	=> 'S3F8OI2P3X6ER1F6XY2Q9ZCY',
 		'translator'		=> NULL,
 	);
@@ -231,7 +231,7 @@ class Auth {
 	 * or route configuration array/stdClass or \MvcCore\Route
 	 * instance. Sign in route is prepended before all routes
 	 * in default service preroute handler.
-	 * @param string|array|\stdClass|\MvcCore\Route $signInRoute
+	 * @param string|array|\MvcCore\Interfaces\IRoute $signInRoute
 	 * @return \MvcCore\Ext\Auth
 	 */
 	public function SetSignInRoute ($signInRoute = NULL) {
@@ -246,7 +246,7 @@ class Auth {
 	 * or route configuration array/stdClass or \MvcCore\Route
 	 * instance. Sign out route is prepended before all routes
 	 * in default service preroute handler.
-	 * @param string|array|\stdClass|\MvcCore\Route $signInRoute
+	 * @param string|array|\MvcCore\Interfaces\IRoute $signInRoute
 	 * @return \MvcCore\Ext\Auth
 	 */
 	public function SetSignOutRoute ($signOutRoute = NULL) {
@@ -334,9 +334,10 @@ class Auth {
 	 */
 	public function Init () {
 		// add sing in or sing out forms routes, complete form success and error addresses
-		\MvcCore\Application::GetInstance()->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) {
-			$this->PrepareHandler($request);
-		});
+		\MvcCore\Application::GetInstance()
+			->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) {
+				$this->PrepareHandler($request);
+			});
 		return $this;
 	}
 	/**
@@ -388,18 +389,10 @@ class Auth {
 			$authControllerClass = '\\'.$authControllerClass;
 		}
 		$authenticated = $this->IsAuthenticated();
-		if (!$authenticated && is_string($this->config->signInRoute)) {
-			$this->config->signInRoute = \MvcCore\Route::GetInstance(array(
-				'name'		=> "$authControllerClass:SignIn",
-				'pattern'	=> $this->config->signInRoute,
-			));
-		}
-		if ($authenticated && is_string($this->config->signOutRoute)) {
-			$this->config->signOutRoute = \MvcCore\Route::GetInstance(array(
-				'name'		=> "$authControllerClass:SignOut",
-				'pattern'	=> $this->config->signOutRoute,
-			));
-		}
+		if (!$authenticated)
+			$this->prepareConfiguredRoute($authControllerClass, 'signInRoute');
+		if ($authenticated)
+			$this->prepareConfiguredRoute($authControllerClass, 'signOutRoute');
 	}
 	/**
 	 * Third prepare handler internal method:
@@ -432,6 +425,24 @@ class Auth {
 			);
 		}
 	}
+
+	/**
+	 * Prepare configured route record into route instance if record is string or array.
+	 * @param string $authControllerClass
+	 * @param string $configRouteKey
+	 * @return void
+	 */
+	protected function prepareConfiguredRoute ($authControllerClass, $configRouteKey) {
+		$route = & $this->config->$configRouteKey;
+		if (!is_string($route) && !is_array($route)) return;
+		$routeClass = \MvcCore\Application::GetInstance()->GetRouteClass();
+		$routeInitData = array('name' => $authControllerClass . ':SignIn');
+		$this->config->$configRouteKey = $routeClass::GetInstance(
+			gettype($route) == 'array'
+				? array_merge($route, $routeInitData)
+				: array_merge(array('pattern' => $route), $routeInitData)
+		);
+	}
 	/**
 	 * Check if configured class exists and thrown exception if not.
 	 * @param string $className
@@ -444,4 +455,6 @@ class Auth {
 		}
 		return $className;
 	}
+
+
 }

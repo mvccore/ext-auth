@@ -25,7 +25,7 @@ class Controller extends Virtual\Controller {
 		$form = \MvcCore\Ext\Auth::GetInstance()->GetForm();
 		list ($result, $data, $errors) = $form->Submit();
 		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
-			// here you can count bad login requests 
+			// here you can count bad login requests
 			// to ban danger user for some time or anything else...
 
 		}
@@ -34,7 +34,7 @@ class Controller extends Virtual\Controller {
 	}
 	/**
 	 * Authentication form submit action to sign out.
-	 * Routed by route configured by: 
+	 * Routed by route configured by:
 	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
 	 * @return void
 	 */
