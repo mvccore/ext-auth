@@ -11,9 +11,9 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Virtual;
+namespace MvcCore\Ext\Auth\Abstracts;
 
-class User extends \MvcCore\Model {
+abstract class User extends \MvcCore\Model {
 
 	/** @var int */
 	public $Id = NULL;

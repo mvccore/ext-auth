@@ -11,23 +11,21 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Virtual;
+namespace MvcCore\Ext\Auth\Abstracts;
 
-class Controller extends \MvcCore\Controller {
+abstract class Controller extends \MvcCore\Controller {
 	/**
 	 * Authentication form submit action to sign in.
 	 * Routed by route configured by:
 	 * MvcCore\Ext\Auth::GetInstance()->SetSignInRoute();
 	 * @return void
 	 */
-	public function SignInAction () {
-	}
+	public abstract function SignInAction ();
 	/**
 	 * Authentication form submit action to sign out.
 	 * Routed by route configured by:
 	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
 	 * @return void
 	 */
-	public function SignOutAction () {
-	}
+	public abstract function SignOutAction ();
 }

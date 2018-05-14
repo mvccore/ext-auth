@@ -16,7 +16,7 @@ namespace MvcCore\Ext\Auth;
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignInForm extends Virtual\Form {
+class SignInForm extends Abstracts\SignForm {
 
 	/** @var string */
 	public $CssClass = 'sign-in';
@@ -70,7 +70,7 @@ class SignInForm extends Virtual\Form {
 		parent::Submit();
 		$userClass = Auth::GetInstance()->GetConfig()->userClass;
 		if ($this->Result === Form::RESULT_SUCCESS) {
-			// now sended values are safe strings, 
+			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:
 			$user = $userClass::Authenticate(
 				$this->Data['username'], $this->Data['password']

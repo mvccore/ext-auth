@@ -11,9 +11,9 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Virtual;
+namespace MvcCore\Ext\Auth\Abstracts;
 
-class Form extends \MvcCore\Ext\Form {
+class SignForm extends \MvcCore\Ext\Form {
 
 	/**
 	 * Unique form id.
@@ -36,7 +36,7 @@ class Form extends \MvcCore\Ext\Form {
 	 * - initialize sign out button and user into
 	 *   template for any custom template rendering.
 	 * @throws \MvcCore\Ext\Form\Core\Exception
-	 * @return \MvcCore\Ext\Auth\Virtual\Form|\MvcCore\Ext\Form
+	 * @return \MvcCore\Ext\Auth\Abstracts\SignForm|\MvcCore\Ext\Form
 	 */
 	public function Init () {
 		return parent::Init();

@@ -16,7 +16,7 @@ namespace MvcCore\Ext\Auth;
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignOutForm extends Virtual\Form {
+class SignOutForm extends Abstracts\SignForm {
 
 	/** @var string */
 	public $CssClass = 'sign-out';
@@ -25,7 +25,7 @@ class SignOutForm extends Virtual\Form {
 	public $User = NULL;
 
 	/**
-	 * Initialize sign out button and user into 
+	 * Initialize sign out button and user into
 	 * template for any custom template rendering.
 	 * @return \MvcCore\Ext\Auth\SignOutForm
 	 */

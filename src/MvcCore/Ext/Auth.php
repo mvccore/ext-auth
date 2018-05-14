@@ -13,29 +13,34 @@
 
 namespace MvcCore\Ext;
 
-class Auth {
+class Auth
+{
 	/**
 	 * MvcCore Extension - Auth - version:
 	 * Comparation by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
 	const VERSION = '5.0.0-alpha';
+
 	/**
 	 * Singleton instance of authentication extension service.
 	 * @var \MvcCore\Ext\Auth
 	 */
 	protected static $instance = NULL;
+
 	/**
 	 * User model isntace or null if user is not authenticated in session.
 	 * @var \MvcCore\Ext\Auth\Virtual\User
 	 */
 	protected $user = NULL;
+
 	/**
 	 * If user is authenticated in session, there is scompleted
 	 * sign in form, else there is sign out form.
 	 * @var \MvcCore\Ext\Auth\Virtual\Form
 	 */
 	protected $form = NULL;
+
 	/**
 	 * Authentication configuration, there is possible to change
 	 * any configuration option ne by one by any setter method
@@ -54,9 +59,10 @@ class Auth {
 		'errorUrl'			=> '',
 		'signInRoute'		=> array('match' => '#^/signin#', 'reverse' => '/signin'),
 		'signOutRoute'		=> array('match' => '#^/signout#', 'reverse' => '/signout'),
-		'passwordHashSalt'	=> 'S3F8OI2P3X6ER1F6XY2Q9ZCY',
+		'passwordHashSalt'	=> NULL,
 		'translator'		=> NULL,
 	);
+
 	/**
 	 * If true, authentication service allready try to load
 	 * user from session and authentication detection os not
@@ -76,6 +82,7 @@ class Auth {
 		}
 		return static::$instance;
 	}
+
 	/**
 	 * Create new Auth service instance.
 	 * For each configuration item- check if it is class definition
@@ -89,6 +96,7 @@ class Auth {
 		}
 		$this->config = (object) $this->config;
 	}
+
 	/**
 	 * Return configuration object.
 	 * @return \stdClass
@@ -96,6 +104,7 @@ class Auth {
 	public function & GetConfig () {
 		return $this->config;
 	}
+
 	/**
 	 * Set up authorization service configuration.
 	 * Each array key must have key by default configuration item.
@@ -114,6 +123,7 @@ class Auth {
 		}
 		return $this;
 	}
+
 	/**
 	 * Set authorization expiration seconds, 10 minutes by default.
 	 * @param int $expirationSeconds
@@ -123,6 +133,7 @@ class Auth {
 		$this->config->expirationSeconds = $expirationSeconds;
 		return $this;
 	}
+
 	/**
 	 * Set user's passwords hash salt, put here any string, every request the same.
 	 * @param string $passwordHashSalt
@@ -132,6 +143,7 @@ class Auth {
 		$this->config->passwordHashSalt = $passwordHashSalt;
 		return $this;
 	}
+
 	/**
 	 * Set authorization service user class
 	 * to get store username from session stored from previous
@@ -146,6 +158,7 @@ class Auth {
 		$this->config->userClass = $this->_checkClass($userClass);
 		return $this;
 	}
+
 	/**
 	 * Set authorization service controller class
 	 * to handle signin and signout actions,
@@ -157,6 +170,7 @@ class Auth {
 		$this->config->controllerClass = $this->_checkClass($controllerClass);
 		return $this;
 	}
+
 	/**
 	 * Set authorization service sign in form class,
 	 * to create, render and submit sign in user.
@@ -168,6 +182,7 @@ class Auth {
 		$this->config->signInFormClass = $this->_checkClass($signInFormClass);
 		return $this;
 	}
+
 	/**
 	 * Set authorization service sign out form class,
 	 * to create, render and submit sign out user.
@@ -179,6 +194,7 @@ class Auth {
 		$this->config->signOutFormClass = $this->_checkClass($signOutFormClass);
 		return $this;
 	}
+
 	/**
 	 * Set translator callable if you want to translate
 	 * sign in and sign out forms labels, placeholders and error messages.
@@ -189,6 +205,7 @@ class Auth {
 		$this->config->translator = $translator;
 		return $this;
 	}
+
 	/**
 	 * Set url to redirect user after sign in process was successfull.
 	 * By default signed in url is the same as current request url,
@@ -200,6 +217,7 @@ class Auth {
 		$this->config->signedInUrl = $signedInUrl;
 		return $this;
 	}
+
 	/**
 	 * Set url to redirect user after sign out process was successfull.
 	 * By default signed out url is the same as current request url,
@@ -211,6 +229,7 @@ class Auth {
 		$this->config->signedOutUrl = $signedOutUrl;
 		return $this;
 	}
+
 	/**
 	 * Set url to redirect user after sign in or sign out process was
 	 * not successfull. By default signed in/out error url is the same as
@@ -223,6 +242,7 @@ class Auth {
 		$this->config->errorUrl = $errorUrl;
 		return $this;
 	}
+
 	/**
 	 * Set sign in route, where to navigate user browser after
 	 * user clicks on submit button in sign in form and
@@ -238,6 +258,7 @@ class Auth {
 		$this->config->signInRoute = $signInRoute;
 		return $this;
 	}
+
 	/**
 	 * Set sign out route, where to navigate user browser after
 	 * user clicks on submit button in sign out form and
@@ -253,6 +274,7 @@ class Auth {
 		$this->config->signOutRoute = $signOutRoute;
 		return $this;
 	}
+
 	/**
 	 * Return TRUE if user is authenticated/signed in.
 	 * If user is not loaded yet, load the user internaly by $auth->GetUser();
@@ -262,6 +284,7 @@ class Auth {
 	public function IsAuthenticated () {
 		return !is_null($this->GetUser());
 	}
+
 	/**
 	 * Get authenticated user instance reference or null if user is not authenticated.
 	 * If user is not loaded yet, load the user internaly by $auth->GetUser();
@@ -276,6 +299,7 @@ class Auth {
 		}
 		return $this->user;
 	}
+
 	/**
 	 * Set user instance by you custom external authorization service.
 	 * If user instance is not null, set internal $auth->userInitialized property
@@ -288,6 +312,7 @@ class Auth {
 		if (!is_null($user)) $this->userInitialized = TRUE;
 		return $this;
 	}
+
 	/**
 	 * Return completed signin/signout form instance.
 	 * Form instance completiion is processed only once,
@@ -315,6 +340,7 @@ class Auth {
 		}
 		return $this->form;
 	}
+
 	/**
 	 * Set sign in/sign out form instance.
 	 * Use this method only if you need sometimes to
@@ -326,6 +352,7 @@ class Auth {
 		$this->form = $form;
 		return $this;
 	}
+
 	/**
 	 * Initialize necessary authentication service handlers.
 	 * Call this method always in Bootstrap before request is routed by:
@@ -340,6 +367,7 @@ class Auth {
 			});
 		return $this;
 	}
+
 	/**
 	 * Process necessary operations before request is routed.
 	 * This method is called internaly by default and it's called
@@ -371,6 +399,7 @@ class Auth {
 		$this->PrepareAdresses();
 		$this->PrepareRouter();
 	}
+
 	/**
 	 * Second prepare handler internal method:
 	 * - If controller class begins with substring containing this
@@ -394,6 +423,7 @@ class Auth {
 		if ($authenticated)
 			$this->prepareConfiguredRoute($authControllerClass, 'signOutRoute');
 	}
+
 	/**
 	 * Third prepare handler internal method:
 	 * - Set up sign in form success url, sign out form success url and error
@@ -407,6 +437,7 @@ class Auth {
 		if (!$this->config->signedOutUrl)	$this->config->signedOutUrl = $request->FullUrl;
 		if (!$this->config->errorUrl)		$this->config->errorUrl = $request->FullUrl;
 	}
+
 	/**
 	 * Fourth prepare handler internal method:
 	 * - Set up sign in or sign out route into router, only route which
@@ -443,6 +474,7 @@ class Auth {
 				: array_merge(array('pattern' => $route), $routeInitData)
 		);
 	}
+
 	/**
 	 * Check if configured class exists and thrown exception if not.
 	 * @param string $className
@@ -455,6 +487,4 @@ class Auth {
 		}
 		return $className;
 	}
-
-
 }

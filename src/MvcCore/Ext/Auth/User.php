@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auth;
 
-class User extends Virtual\User {
+class User extends Abstracts\User {
 
 	/** @var bool */
 	protected $autoInit = FALSE;
@@ -91,7 +91,7 @@ class User extends Virtual\User {
 
 	/**
 	 * Get session to get/set/clear username,
-	 * is session is not started - start the session.
+	 * if session is not started - start the session.
 	 * @return \MvcCore\Session
 	 */
 	protected static function & getSession () {
