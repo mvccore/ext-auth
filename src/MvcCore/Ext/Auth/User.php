@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auth;
 
-class User extends \MvcCore\Model {
+class User extends \MvcCore\Model implements \MvcCore\Ext\Auth\Interfaces\IUser {
 
 	/** @var bool */
 	protected $autoInit = FALSE;

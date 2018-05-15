@@ -40,6 +40,8 @@ class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfa
 	public function Init () {
 		parent::Init();
 
+		$this->addSuccessAndErrorUrlHiddenControls();
+
 		$this->AddField(new Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Log Out',

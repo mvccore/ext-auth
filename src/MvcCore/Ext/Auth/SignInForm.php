@@ -37,7 +37,9 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 	 */
 	public function Init () {
 		parent::Init();
-
+		
+		$this->addSuccessAndErrorUrlHiddenControls();
+		
 		$this->AddField(new Form\Text(array(
 			'name'			=> 'username',
 			'placeholder'	=> 'User',
@@ -74,6 +76,7 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
+		$userClass = Auth::GetInstance()->GetConfig()->userClass;
 		if ($this->Result === Form::RESULT_SUCCESS) {
 			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:

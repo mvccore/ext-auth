@@ -66,6 +66,13 @@ class Auth
 	protected $signErrorRoute = NULL;
 
 	/**
+	 * `TRUE`if there was already called method `GetUser()`
+	 * with any result or `SetUSer()` with any param.
+	 * @var bool
+	 */
+	protected $userInitialized = FALSE;
+
+	/**
 	 * Authentication configuration, there is possible to change
 	 * any configuration option ne by one by any setter method
 	 * multiple values or by \MvcCore\Ext\Auth::GetInstance()->Configure([...]) method.
@@ -337,9 +344,10 @@ class Auth
 	 * @return \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser
 	 */
 	public function & GetUser () {
-		if ($this->user === NULL) {
+		if (!$this->userInitialized && $this->user === NULL) {
 			$userClass = $this->config->userClass;
 			$this->user = $userClass::SetUpUserBySession();
+			$this->userInitialized = TRUE;
 		}
 		return $this->user;
 	}
@@ -351,6 +359,21 @@ class Auth
 	 */
 	public function & SetUser (\MvcCore\Ext\Auth\Interfaces\IUser & $user) {
 		$this->user = $user;
+		$this->userInitialized = TRUE;
+		return $this;
+	}
+
+	/**
+	 * Alias for `\MvcCore\Ext\Auth\Users\Database::SetUsersTableStructure($tableName, $columnNames);`.
+	 * @param string|NULL	$tableName
+	 * @param string[]|NULL	$columnNames
+	 */
+	public function & SetTableStructureForDbUsers ($tableName = NULL, $columnNames = NULL) {
+		$userClass = $this->config->userClass;
+		$toolClass = $this->application->GetToolClass();
+		if ($toolClass::CheckClassInterface($userClass, 'MvcCore\Ext\Auth\Interfaces\IDatabaseUser', TRUE)) {
+			$userClass::SetUsersTableStructure($tableName, $columnNames);
+		};
 		return $this;
 	}
 

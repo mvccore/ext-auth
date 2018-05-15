@@ -67,4 +67,5 @@ interface IUser
 	 * @return string
 	 */
 	public static function EncodePasswordToHash ($password = '');
+
 }
