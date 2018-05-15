@@ -8,7 +8,7 @@ class Database extends \MvcCore\Ext\Auth\User implements \MvcCore\Ext\Auth\Inter
 		'table'		=> 'users',
 		'columns'	=> array(
 			'id'			=> 'id',
-			'userName'		=> 'username',
+			'userName'		=> 'user_name',
 			'passwordHash'	=> 'password_hash',
 			'fullName'		=> 'full_name',
 		)
@@ -36,7 +36,7 @@ class Database extends \MvcCore\Ext\Auth\User implements \MvcCore\Ext\Auth\Inter
 	public static function GetByUserName ($userName) {
 		$table = static::$usersTableStructure['table'];
 		$columns = (object) static::$usersTableStructure['columns'];
-		$select = self::getDb()->prepare("
+		$sql = "
 			SELECT
 				u.$columns->id AS id,
 				u.$columns->userName AS userName,
@@ -45,13 +45,14 @@ class Database extends \MvcCore\Ext\Auth\User implements \MvcCore\Ext\Auth\Inter
 			FROM
 				$table u
 			WHERE
-				u.user_name = :user_name
-		");
+				u.$columns->userName = :user_name
+		";
+		$select = static::getDb()->prepare($sql);
 		$select->execute(array(
 			":user_name" => $userName,
 		));
 		if ($data = $select->fetch(\PDO::FETCH_ASSOC)) {
-			return (new self())->SetUp($data, FALSE, TRUE, FALSE);
+			return (new static())->SetUp($data, FALSE, TRUE, FALSE);
 		}
 		return NULL;
 	}

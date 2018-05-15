@@ -407,7 +407,8 @@ class Auth
 				->SetAction($action)
 				->SetSuccessUrl($successUrl)
 				->SetErrorUrl($this->config->signErrorUrl)
-				->SetTranslator($this->config->translator);
+				->SetTranslator($this->config->translator)
+				->Init();
 		}
 		return $this->form;
 	}

@@ -72,14 +72,14 @@ trait User {
 	public static function SetUpUserBySession () {
 		$userSessionNamespace = static::getUserSessionNamespace();
 		if (isset($userSessionNamespace->userName)) {
-			return self::GetByUserName($userSessionNamespace->userName);
+			return static::GetByUserName($userSessionNamespace->userName);
 		}
 		return NULL;
 	}
 
 	public static function LogIn ($userName = '', $password = '') {
 		$hashedPassword = static::EncodePasswordToHash($password);
-		$user = self::GetByUserName($userName);
+		$user = static::GetByUserName($userName);
 		if ($user && $user->passwordHash === $hashedPassword) {
 			static::getUserSessionNamespace()->userName = $user->userName;
 			return $user;
