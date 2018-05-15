@@ -16,13 +16,21 @@ namespace MvcCore\Ext\Auth;
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignOutForm extends Abstracts\SignForm {
+class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfaces\ISignForm {
+
+	use \MvcCore\Ext\Auth\Traits\SignForm;
+
+	/** @var string */
+	public $Id = 'authentication';
 
 	/** @var string */
 	public $CssClass = 'sign-out';
 
-	/** @var \MvcCore\Ext\Auth\Virtual\User */
-	public $User = NULL;
+	/** @var string */
+	public $Method = \MvcCore\Ext\Form::METHOD_POST;
+
+	/** @var \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser */
+	protected $user = NULL;
 
 	/**
 	 * Initialize sign out button and user into
@@ -32,16 +40,13 @@ class SignOutForm extends Abstracts\SignForm {
 	public function Init () {
 		parent::Init();
 
-		$cfg = Auth::GetInstance()->GetConfig();
-		$this->addSuccessAndErrorUrlHiddens($cfg->signedInUrl, $cfg->errorUrl);
-
 		$this->AddField(new Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Log Out',
 			'cssClasses'	=> array('button'),
 		)));
 
-		$this->User = Auth::GetInstance()->GetUser();
+		$this->user = Auth::GetInstance()->GetUser();
 
 		return $this;
 	}
@@ -56,10 +61,10 @@ class SignOutForm extends Abstracts\SignForm {
 		parent::Submit();
 		if ($this->Result === Form::RESULT_SUCCESS) {
 			$userClass = Auth::GetInstance()->GetConfig()->userClass;
-			$userClass::ClearFromSession();
+			$userClass::LogOut();
 		}
-		$this->SuccessUrl = $this->Data['successUrl'];
-		$this->ErrorUrl = $this->Data['errorUrl'];
+		$this->SetSuccessUrl($this->Data['successUrl']);
+		$this->SetErrorUrl($this->Data['errorUrl']);
 		return array($this->Result, $this->Data, $this->Errors);
 	}
 }

@@ -30,16 +30,40 @@ class Auth
 
 	/**
 	 * User model isntace or null if user is not authenticated in session.
-	 * @var \MvcCore\Ext\Auth\Virtual\User
+	 * @var \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser
 	 */
 	protected $user = NULL;
 
 	/**
 	 * If user is authenticated in session, there is scompleted
 	 * sign in form, else there is sign out form.
-	 * @var \MvcCore\Ext\Auth\Virtual\Form
+	 * @var \MvcCore\Ext\Auth\Traits\SignForm|\MvcCore\Ext\Auth\Interfaces\ISignForm|\MvcCore\Ext\Auth\SignInForm|\MvcCore\Ext\Auth\SignOutForm
 	 */
 	protected $form = NULL;
+
+	/**
+	 * MvcCore application instance reference.
+	 * @var \MvcCore\Application|\MvcCore\Interfaces\IApplication
+	 */
+	protected $application = NULL;
+
+	/**
+	 * Sign in route instance by configured core class.
+	 * @var \MvcCore\Route|\MvcCore\Interfaces\IRoute
+	 */
+	protected $signInRoute = NULL;
+
+	/**
+	 * Sign out route instance by configured core class.
+	 * @var \MvcCore\Route|\MvcCore\Interfaces\IRoute
+	 */
+	protected $signOutRoute = NULL;
+
+	/**
+	 * Sign error route instance by configured core class.
+	 * @var \MvcCore\Route|\MvcCore\Interfaces\IRoute
+	 */
+	protected $signErrorRoute = NULL;
 
 	/**
 	 * Authentication configuration, there is possible to change
@@ -50,35 +74,38 @@ class Auth
 	 */
 	protected $config = array(
 		'expirationSeconds'	=> 600, // 10 minutes
+		/** @var string Full class name to use for user instance. */
 		'userClass'			=> '\User',
-		'controllerClass'	=> '\Controller',
+		/** @var string Full class name to use for controller instance to submit sign in/out form. */
+		'controllerClass'	=> '\SignController',
+		/** @var string Full class name to use for sign in form instance. */
 		'signInFormClass'	=> '\SignInForm',
+		/** @var string Full class name to use for sign out form instance. */
 		'signOutFormClass'	=> '\SignOutForm',
-		'signedInUrl'		=> '',
-		'signedOutUrl'		=> '',
-		'errorUrl'			=> '',
+		/** @var string|NULL Optional custom url to redirect signed in user. Null means the same url where is sign in/out form rendered */
+		'signedInUrl'		=> NULL,
+		/** @var string|NULL Optional custom url to redirect signed out user. Null means the same url where is sign in/out form rendered */
+		'signedOutUrl'		=> NULL,
+		/** @var string|NULL Optional custom url to redirect user with wrong credentials. Null means the same url where is sign in/out form rendered */
+		'signErrorUrl'		=> NULL,
+		/** @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute Route to submit sign in form to */
 		'signInRoute'		=> array('match' => '#^/signin#', 'reverse' => '/signin'),
+		/** @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute Route to submit sign out form to */
 		'signOutRoute'		=> array('match' => '#^/signout#', 'reverse' => '/signout'),
+		/** @var string|NULL Optional custom salt for `passord_hash();`. */
 		'passwordHashSalt'	=> NULL,
+		/** @var callable Valid callable to set up sign in/out form translator */
 		'translator'		=> NULL,
 	);
-
-	/**
-	 * If true, authentication service allready try to load
-	 * user from session and authentication detection os not
-	 * necessary to run again. False by default.
-	 * @var bool
-	 */
-	protected $userInitialized = FALSE;
 
 	/**
 	 * Return singleton instance. If instance exists, return existing instance,
 	 * if not, create new Auth service instance, store it and return it.
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public static function GetInstance () {
-		if (is_null(static::$instance)) {
-			static::$instance = new static();
+	public static function GetInstance ($config = array()) {
+		if (static::$instance === NULL) {
+			static::$instance = new static($config);
 		}
 		return static::$instance;
 	}
@@ -88,13 +115,22 @@ class Auth
 	 * For each configuration item- check if it is class definition
 	 * and if it is, complete whole class definition.
 	 */
-	public function __construct () {
+	public function __construct ($config = array()) {
+		// initialize default configuration
 		foreach ($this->config as $key => & $value) {
-			if (strpos($key, 'Class') !== FALSE) {
-				$value = __CLASS__ . $value;
-			}
+			if (strpos($key, 'Class') !== FALSE)
+				$value = get_called_class() . $value;
 		}
 		$this->config = (object) $this->config;
+		// merge another possible configuration
+		if ($config) $this->Configure($config);
+		// set up application reference
+		$this->application = & \MvcCore\Application::GetInstance();
+		// add sing in or sing out forms routes, complete form success and error addresses
+		$this->application
+			->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) {
+				$this->PrepareHandler($request);
+		});
 	}
 
 	/**
@@ -106,6 +142,15 @@ class Auth
 	}
 
 	/**
+	 * Replace whole configuration by new values, no merging with default configuration.
+	 * @return \MvcCore\Ext\Auth
+	 */
+	public function & SetConfig ($config = array()) {
+		$this->config = (object) $config;
+		return $this;
+	}
+
+	/**
 	 * Set up authorization service configuration.
 	 * Each array key must have key by default configuration item.
 	 * If configuration item is class, it's checked if it exists.
@@ -113,12 +158,12 @@ class Auth
 	 * @return \MvcCore\Ext\Auth
 	 */
 	public function Configure ($config = array()) {
-		foreach ($config as $key => $value) {
-			if (isset($this->config->$key)) {
-				if (strpos($key, 'Class') !== FALSE) {
-					$this->_checkClass($value);
-				}
-				$this->config->$key = $value;
+		$configEntries = array_keys((array) $this->config);
+		foreach ($config as $key => & $value) {
+			if (in_array($key, $configEntries)) {
+				if (strpos($key, 'Class') !== FALSE)
+					$this->checkClassExistence($value);
+				$this->config->$key = & $value;
 			}
 		}
 		return $this;
@@ -129,7 +174,7 @@ class Auth
 	 * @param int $expirationSeconds
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetExpirationSeconds ($expirationSeconds = 600) {
+	public function & SetExpirationSeconds ($expirationSeconds = 600) {
 		$this->config->expirationSeconds = $expirationSeconds;
 		return $this;
 	}
@@ -139,7 +184,7 @@ class Auth
 	 * @param string $passwordHashSalt
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetPasswordHashSalt ($passwordHashSalt = '') {
+	public function & SetPasswordHashSalt ($passwordHashSalt = '') {
 		$this->config->passwordHashSalt = $passwordHashSalt;
 		return $this;
 	}
@@ -150,48 +195,48 @@ class Auth
 	 * requests for 10 minutes by default, by sign in action to compare
 	 * sender credentials with any user from your custom place
 	 * and by sign out action to remove username from session.
-	 * It has to extend \MvcCore\Ext\Auth\Virtual\User.
+	 * It has to extend \MvcCore\Ext\Auth\Abstracts\User.
 	 * @param string $userClass
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetUserClass ($userClass = '') {
-		$this->config->userClass = $this->_checkClass($userClass);
+	public function & SetUserClass ($userClass = '') {
+		$this->config->userClass = $this->checkClassExistence($userClass);
 		return $this;
 	}
 
 	/**
 	 * Set authorization service controller class
 	 * to handle signin and signout actions,
-	 * it has to extend \MvcCore\Ext\Auth\Virtual\Controller.
+	 * it has to extend \MvcCore\Ext\Auth\Abstracts\Controller.
 	 * @param string $controllerClass
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetControllerClass ($controllerClass = '') {
-		$this->config->controllerClass = $this->_checkClass($controllerClass);
+	public function & SetControllerClass ($controllerClass = '') {
+		$this->config->controllerClass = $this->checkClassExistence($controllerClass);
 		return $this;
 	}
 
 	/**
 	 * Set authorization service sign in form class,
 	 * to create, render and submit sign in user.
-	 * it has to implement \MvcCore\Ext\Auth\Virtual\Form.
+	 * it has to implement \MvcCore\Ext\Auth\Abstracts\Form.
 	 * @param string $signInFormClass
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignInFormClass ($signInFormClass = '') {
-		$this->config->signInFormClass = $this->_checkClass($signInFormClass);
+	public function & SetSignInFormClass ($signInFormClass = '') {
+		$this->config->signInFormClass = $this->checkClassExistence($signInFormClass);
 		return $this;
 	}
 
 	/**
 	 * Set authorization service sign out form class,
 	 * to create, render and submit sign out user.
-	 * it has to implement \MvcCore\Ext\Auth\Virtual\Form.
+	 * it has to implement \MvcCore\Ext\Auth\Abstracts\Form.
 	 * @param string $signInFormClass
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignOutFormClass ($signOutFormClass = '') {
-		$this->config->signOutFormClass = $this->_checkClass($signOutFormClass);
+	public function & SetSignOutFormClass ($signOutFormClass = '') {
+		$this->config->signOutFormClass = $this->checkClassExistence($signOutFormClass);
 		return $this;
 	}
 
@@ -201,7 +246,7 @@ class Auth
 	 * @param callable $translator
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetTranslator (callable $translator = NULL) {
+	public function & SetTranslator (callable $translator = NULL) {
 		$this->config->translator = $translator;
 		return $this;
 	}
@@ -213,7 +258,7 @@ class Auth
 	 * @param string $signedInUrl
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignedInUrl ($signedInUrl ='') {
+	public function & SetSignedInUrl ($signedInUrl ='') {
 		$this->config->signedInUrl = $signedInUrl;
 		return $this;
 	}
@@ -225,7 +270,7 @@ class Auth
 	 * @param string $signedOutUrl
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignedOutUrl ($signedOutUrl ='') {
+	public function & SetSignedOutUrl ($signedOutUrl ='') {
 		$this->config->signedOutUrl = $signedOutUrl;
 		return $this;
 	}
@@ -235,11 +280,11 @@ class Auth
 	 * not successfull. By default signed in/out error url is the same as
 	 * current request url, internaly configured by default
 	 * authentication service pre request handler.
-	 * @param string $errorUrl
+	 * @param string $signErrorUrl
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetErrorUrl ($errorUrl ='') {
-		$this->config->errorUrl = $errorUrl;
+	public function & SetSignErrorUrl ($signErrorUrl = NULL) {
+		$this->config->signErrorUrl = $signErrorUrl;
 		return $this;
 	}
 
@@ -254,7 +299,7 @@ class Auth
 	 * @param string|array|\MvcCore\Interfaces\IRoute $signInRoute
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignInRoute ($signInRoute = NULL) {
+	public function & SetSignInRoute ($signInRoute = NULL) {
 		$this->config->signInRoute = $signInRoute;
 		return $this;
 	}
@@ -270,7 +315,7 @@ class Auth
 	 * @param string|array|\MvcCore\Interfaces\IRoute $signInRoute
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetSignOutRoute ($signOutRoute = NULL) {
+	public function & SetSignOutRoute ($signOutRoute = NULL) {
 		$this->config->signOutRoute = $signOutRoute;
 		return $this;
 	}
@@ -282,34 +327,30 @@ class Auth
 	 * @return bool
 	 */
 	public function IsAuthenticated () {
-		return !is_null($this->GetUser());
+		return $this->GetUser() !== NULL;
 	}
 
 	/**
 	 * Get authenticated user instance reference or null if user is not authenticated.
 	 * If user is not loaded yet, load the user internaly by $auth->GetUser();
 	 * to start session and try to load user by session username record.
-	 * @return \MvcCore\Ext\Auth\Virtual\User
+	 * @return \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser
 	 */
 	public function & GetUser () {
-		if (!$this->userInitialized && is_null($this->user)) {
+		if ($this->user === NULL) {
 			$userClass = $this->config->userClass;
-			$this->user = $userClass::GetUserBySession();
-			$this->userInitialized = TRUE;
+			$this->user = $userClass::SetUpUserBySession();
 		}
 		return $this->user;
 	}
 
 	/**
 	 * Set user instance by you custom external authorization service.
-	 * If user instance is not null, set internal $auth->userInitialized property
-	 * to TRUE to not load user internaly again.
-	 * @param \MvcCore\Ext\Auth\Virtual\User $user
+	 * @param \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser $user
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetUser (\MvcCore\Ext\Auth\Virtual\User & $user) {
+	public function & SetUser (\MvcCore\Ext\Auth\Interfaces\IUser & $user) {
 		$this->user = $user;
-		if (!is_null($user)) $this->userInitialized = TRUE;
 		return $this;
 	}
 
@@ -321,22 +362,29 @@ class Auth
 	 * to set form into you custom template to render it for user.
 	 * If user is not authenticated, sign in form is returned and
 	 * if user is authenticated, opposite sign out form is returned.
-	 * @return \MvcCore\Ext\Auth\SignInForm|\MvcCore\Ext\Auth\SignOutForm|mixed
+	 * @return \MvcCore\Ext\Auth\Interfaces\ISignForm
 	 */
 	public function & GetForm () {
-		if (is_null($this->form)) {
-			$controller = \MvcCore\Application::GetInstance()->GetController();
+		if ($this->form === NULL) {
+			$controller = $this->application->GetController();
+			$routerClass = $this->application->GetRouterClass();
+			$router = $routerClass::GetInstance();
+			$action = '';
+			$successUrl = '';
 			if ($this->IsAuthenticated()) {
 				$this->form = new \MvcCore\Ext\Auth\SignOutForm($controller);
-				$this->form->Action = \MvcCore\Application::GetInstance()->Url($this->config->signOutRoute->GetName());
-				$this->form->SuccessUrl = $this->config->signedOutUrl;
+				$action = $router->Url($this->signOutRoute->GetName());
+				$successUrl = $this->config->signedOutUrl;
 			} else {
 				$this->form = new \MvcCore\Ext\Auth\SignInForm($controller);
-				$this->form->Action = \MvcCore\Application::GetInstance()->Url($this->config->signInRoute->GetName());
-				$this->form->SuccessUrl = $this->config->signedInUrl;
+				$action = $router->Url($this->signInRoute->GetName());
+				$successUrl = $this->config->signedInUrl;
 			}
-			$this->form->ErrorUrl = $this->config->errorUrl;
-			$this->form->SetTranslator($this->config->translator);
+			$this->form
+				->SetAction($action)
+				->SetSuccessUrl($successUrl)
+				->SetErrorUrl($this->config->signErrorUrl)
+				->SetTranslator($this->config->translator);
 		}
 		return $this->form;
 	}
@@ -345,26 +393,11 @@ class Auth
 	 * Set sign in/sign out form instance.
 	 * Use this method only if you need sometimes to
 	 * complete different form to render.
-	 * @param \MvcCore\Ext\Auth\Virtual\Form $form
+	 * @param \MvcCore\Ext\Auth\SignInForm|\MvcCore\Ext\Auth\SignOutForm|\MvcCore\Ext\Auth\Traits\SignForm|\MvcCore\Ext\Auth\Interfaces\ISignForm $form
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function SetForm (& $form) {
+	public function & SetForm (\MvcCore\Ext\Auth\Interfaces\ISignForm & $form) {
 		$this->form = $form;
-		return $this;
-	}
-
-	/**
-	 * Initialize necessary authentication service handlers.
-	 * Call this method always in Bootstrap before request is routed by:
-	 * MvcCore\Ext\Auth::GetInstance()->Init();
-	 * @return \MvcCore\Ext\Auth
-	 */
-	public function Init () {
-		// add sing in or sing out forms routes, complete form success and error addresses
-		\MvcCore\Application::GetInstance()
-			->AddPreRouteHandler(function (\MvcCore\Interfaces\IRequest & $request) {
-				$this->PrepareHandler($request);
-			});
 		return $this;
 	}
 
@@ -414,28 +447,28 @@ class Auth
 	 */
 	public function PrepareRoutes () {
 		$authControllerClass = & $this->config->controllerClass;
-		if (strpos($authControllerClass, __CLASS__) === 0) {
+		if (strpos($authControllerClass, get_called_class()) === 0) {
 			$authControllerClass = '\\'.$authControllerClass;
 		}
 		$authenticated = $this->IsAuthenticated();
 		if (!$authenticated)
-			$this->prepareConfiguredRoute($authControllerClass, 'signInRoute');
+			$this->prepareConfiguredRoute($authControllerClass.':SignIn', 'signInRoute');
 		if ($authenticated)
-			$this->prepareConfiguredRoute($authControllerClass, 'signOutRoute');
+			$this->prepareConfiguredRoute($authControllerClass.':SignOut', 'signOutRoute');
 	}
 
 	/**
 	 * Third prepare handler internal method:
 	 * - Set up sign in form success url, sign out form success url and error
-	 *   url for both ign in/out forms, as current request url by default.
+	 *   url for both sign in/out forms, as current request url by default.
 	 *   If any url is configured already, nothing is changed.
 	 * @return void
 	 */
 	public function PrepareAdresses () {
-		$request = & \MvcCore\Application::GetInstance()->GetRequest();
-		if (!$this->config->signedInUrl)	$this->config->signedInUrl = $request->FullUrl;
-		if (!$this->config->signedOutUrl)	$this->config->signedOutUrl = $request->FullUrl;
-		if (!$this->config->errorUrl)		$this->config->errorUrl = $request->FullUrl;
+		$currentFullUrl = $this->application->GetRequest()->GetFullUrl();
+		if ($this->config->signedInUrl === NULL)	$this->config->signedInUrl = $currentFullUrl;
+		if ($this->config->signedOutUrl === NULL)	$this->config->signedOutUrl = $currentFullUrl;
+		if ($this->config->signErrorUrl === NULL)	$this->config->signErrorUrl = $currentFullUrl;
 	}
 
 	/**
@@ -446,33 +479,37 @@ class Auth
 	 * @return void
 	 */
 	public function PrepareRouter () {
+		$routerClass = $this->application->GetRouterClass();
 		if ($this->IsAuthenticated()) {
-			\MvcCore\Router::GetInstance()->AddRoute(
-				$this->config->signOutRoute, TRUE
+			$routerClass::GetInstance()->AddRoute(
+				$this->signOutRoute, TRUE
 			);
 		} else {
-			\MvcCore\Router::GetInstance()->AddRoute(
-				$this->config->signInRoute, TRUE
+			$routerClass::GetInstance()->AddRoute(
+				$this->signInRoute, TRUE
 			);
 		}
 	}
 
 	/**
 	 * Prepare configured route record into route instance if record is string or array.
-	 * @param string $authControllerClass
-	 * @param string $configRouteKey
+	 * @param string $authCtrlAndActionName
+	 * @param string $routeName
 	 * @return void
 	 */
-	protected function prepareConfiguredRoute ($authControllerClass, $configRouteKey) {
-		$route = & $this->config->$configRouteKey;
-		if (!is_string($route) && !is_array($route)) return;
-		$routeClass = \MvcCore\Application::GetInstance()->GetRouteClass();
-		$routeInitData = array('name' => $authControllerClass . ':SignIn');
-		$this->config->$configRouteKey = $routeClass::GetInstance(
-			gettype($route) == 'array'
-				? array_merge($route, $routeInitData)
-				: array_merge(array('pattern' => $route), $routeInitData)
-		);
+	protected function prepareConfiguredRoute ($authCtrlAndActionName, $routeName) {
+		$route = & $this->config->$routeName;
+		if ($route instanceof \MvcCore\Interfaces\IRoute) {
+			$this->$routeName = & $route;
+		} else {
+			$routeClass = $this->application->GetRouteClass();
+			$routeInitData = array('name' => $authCtrlAndActionName);
+			$this->$routeName = $routeClass::GetInstance(
+				gettype($route) == 'array'
+					? array_merge($routeInitData, $route)
+					: array_merge(array('pattern' => $route), $routeInitData)
+			);
+		}
 	}
 
 	/**
@@ -481,10 +518,10 @@ class Auth
 	 * @throws \Exception
 	 * @return string
 	 */
-	private function _checkClass (& $className) {
-		if (!class_exists($className)) {
-			throw new \Exception("[".__CLASS__."] Configured class: '$className' doesn't exists.'");
-		}
+	protected function checkClassExistence ($className, $thrownException = TRUE) {
+		if (!class_exists($className) && $thrownException) throw new \InvalidArgumentException(
+			"[".__CLASS__."] Configured class: '$className' doesn't exists.'"
+		);
 		return $className;
 	}
 }

@@ -11,9 +11,9 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth;
+namespace MvcCore\Ext\Auth\Traits;
 
-class Controller extends Virtual\Controller {
+trait SignController {
 	/**
 	 * Authentication form submit action to sign in.
 	 * Routed by route configured by:
@@ -32,6 +32,7 @@ class Controller extends Virtual\Controller {
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();
 	}
+
 	/**
 	 * Authentication form submit action to sign out.
 	 * Routed by route configured by:

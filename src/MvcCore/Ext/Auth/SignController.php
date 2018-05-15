@@ -13,10 +13,7 @@
 
 namespace MvcCore\Ext\Auth;
 
-class User extends \MvcCore\Model {
-
-	/** @var bool */
-	protected $autoInit = FALSE;
-
-	use \MvcCore\Ext\Auth\Traits\User;
+class SignController extends \MvcCore\Controller implements \MvcCore\Ext\Auth\Interfaces\ISignController
+{
+	use Traits\SignController;
 }

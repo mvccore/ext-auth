@@ -16,10 +16,18 @@ namespace MvcCore\Ext\Auth;
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignInForm extends Abstracts\SignForm {
+class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfaces\ISignForm {
+
+	use \MvcCore\Ext\Auth\Traits\SignForm;
+
+	/** @var string */
+	public $Id = 'authentication';
 
 	/** @var string */
 	public $CssClass = 'sign-in';
+
+	/** @var string */
+	public $Method = \MvcCore\Ext\Form::METHOD_POST;
 
 	/**
 	 * Initialize all form fields, initialize hidden field with
@@ -29,9 +37,6 @@ class SignInForm extends Abstracts\SignForm {
 	 */
 	public function Init () {
 		parent::Init();
-
-		$cfg = Auth::GetInstance()->GetConfig();
-		$this->addSuccessAndErrorUrlHiddens($cfg->signedInUrl, $cfg->errorUrl);
 
 		$this->AddField(new Form\Text(array(
 			'name'			=> 'username',
@@ -49,11 +54,12 @@ class SignInForm extends Abstracts\SignForm {
 
 		$params = \MvcCore\Application::GetInstance()->GetRequest()->GetParams();
 
-		$sourceUrl = isset($params['sourceUrl']) ? $params['sourceUrl'] : '' ;
-		$sourceUrl = filter_var($sourceUrl, FILTER_VALIDATE_URL);
+		$sourceUrl = isset($params['sourceUrl'])
+			? filter_var($params['sourceUrl'], FILTER_VALIDATE_URL)
+			: '' ;
 		$this->AddField(new Form\Hidden(array(
 			'name'			=> 'sourceUrl',
-			'value'			=> $sourceUrl,
+			'value'			=> $sourceUrl ?: '',
 		)));
 
 		return $this;
@@ -68,25 +74,26 @@ class SignInForm extends Abstracts\SignForm {
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		$userClass = Auth::GetInstance()->GetConfig()->userClass;
 		if ($this->Result === Form::RESULT_SUCCESS) {
 			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:
-			$user = $userClass::Authenticate(
+			$userClass = Auth::GetInstance()->GetConfig()->userClass;
+			$user = $userClass::LogIn(
 				$this->Data['username'], $this->Data['password']
 			);
-			if (is_null($user)) {
+			if ($user === NULL)
 				$this->AddError('User name or password is incorrect.');
-			} else {
-				$userClass::StoreInSession($user);
-			}
 		}
 		$data = (object) $this->Data;
-		$this->SuccessUrl = $data->sourceUrl ? urldecode($data->sourceUrl) : $data->successUrl;
+		$this->SuccessUrl = $data->sourceUrl
+			? urldecode($data->sourceUrl)
+			: $data->successUrl;
 		$this->ErrorUrl = $data->errorUrl;
-		if ($this->Result !== Form::RESULT_SUCCESS) {
-			sleep(3);
-		}
-		return array($this->Result, $this->Data, $this->Errors);
+		if ($this->Result !== Form::RESULT_SUCCESS) sleep(3);
+		return array(
+			$this->Result,
+			$this->Data,
+			$this->Errors
+		);
 	}
 }
