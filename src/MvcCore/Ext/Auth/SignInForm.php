@@ -37,9 +37,9 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 	 */
 	public function Init () {
 		parent::Init();
-		
+
 		$this->addSuccessAndErrorUrlHiddenControls();
-		
+
 		$this->AddField(new Form\Text(array(
 			'name'			=> 'username',
 			'placeholder'	=> 'User',
@@ -54,14 +54,14 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 			'cssClasses'	=> array('button'),
 		)));
 
-		$params = \MvcCore\Application::GetInstance()->GetRequest()->GetParams();
+		$sourceUrl = \MvcCore\Application::GetInstance()->GetRequest()
+			->GetParam('sourceUrl', '.*', '', 'string');
+		$sourceUrl = filter_var(rawurldecode($sourceUrl), FILTER_VALIDATE_URL);
 
-		$sourceUrl = isset($params['sourceUrl'])
-			? filter_var($params['sourceUrl'], FILTER_VALIDATE_URL)
-			: '' ;
 		$this->AddField(new Form\Hidden(array(
 			'name'			=> 'sourceUrl',
-			'value'			=> $sourceUrl ?: '',
+			'value'			=> rawurlencode($sourceUrl) ?: '',
+			'validators'	=> array('Url'),
 		)));
 
 		return $this;
@@ -76,7 +76,6 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		$userClass = Auth::GetInstance()->GetConfig()->userClass;
 		if ($this->Result === Form::RESULT_SUCCESS) {
 			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:
@@ -84,12 +83,14 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 			$user = $userClass::LogIn(
 				$this->Data['username'], $this->Data['password']
 			);
-			if ($user === NULL)
-				$this->AddError('User name or password is incorrect.');
+			if ($user === NULL) $this->AddError(
+				'User name or password is incorrect.', 
+				array('username', 'password')
+			);
 		}
 		$data = (object) $this->Data;
 		$this->SuccessUrl = $data->sourceUrl
-			? urldecode($data->sourceUrl)
+			? $data->sourceUrl
 			: $data->successUrl;
 		$this->ErrorUrl = $data->errorUrl;
 		if ($this->Result !== Form::RESULT_SUCCESS) sleep(3);
