@@ -96,9 +96,9 @@ class Auth
 		/** @var string|NULL Optional custom url to redirect user with wrong credentials. Null means the same url where is sign in/out form rendered */
 		'signErrorUrl'		=> NULL,
 		/** @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute Route to submit sign in form to */
-		'signInRoute'		=> array('match' => '#^/signin#', 'reverse' => '/signin'),
+		'signInRoute'		=> array('match' => '#^/signin(?=/$|$)#', 'reverse' => '/signin'),
 		/** @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute Route to submit sign out form to */
-		'signOutRoute'		=> array('match' => '#^/signout#', 'reverse' => '/signout'),
+		'signOutRoute'		=> array('match' => '#^/signout(?=/$|$)#', 'reverse' => '/signout'),
 		/** @var string|NULL Optional custom salt for `passord_hash();`. */
 		'passwordHashSalt'	=> NULL,
 		/** @var callable Valid callable to set up sign in/out form translator */

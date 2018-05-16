@@ -94,19 +94,15 @@ trait User {
 	public static function LogOut () {
 		static::getUserSessionNamespace()->Destroy();
 	}
-
 	public function & GetRoles () {
 		return $this;
 	}
-
 	public function & SetRoles ($roles = array()){
 		return $this;
 	}
-
 	public function & AddRole ($role){
 		return $this;
 	}
-
 	public function & RemoveRole ($role){
 		return $this;
 	}
@@ -119,14 +115,21 @@ trait User {
 	public static function EncodePasswordToHash ($password = '', $options = array()) {
 		if (!isset($options['salt'])) {
 			$configuredSalt = \MvcCore\Ext\Auth::GetInstance()->GetConfig()->passwordHashSalt;
-			if ($configuredSalt !== NULL) $options['salt'] = $configuredSalt;
+			if ($configuredSalt !== NULL) {
+				$options['salt'] = $configuredSalt;
+			} else {
+				throw new \InvalidArgumentException(
+					'['.__CLASS__.'] No option `salt` given by second argument `$options`'
+					." or no salt configured by `\MvcCore\Ext\Auth::GetInstance()->SetPasswordHashSalt('...')`."
+				);
+			}
 		}
 		if (isset($options['cost']) && ($options['cost'] < 4 || $options['cost'] > 31))
 			throw new \InvalidArgumentException(
-				'['.__CLASS__.'] Cost option has to be from `4` to `31`, `' . $options['cost'] . '` given.'
+				'['.__CLASS__.'] `cost` option has to be from `4` to `31`, `' . $options['cost'] . '` given.'
 			);
-		$result = password_hash($password, PASSWORD_BCRYPT, $options);
-		if ($result === FALSE || strlen($result) < 60) throw new \RuntimeException(
+		$result = @password_hash($password, PASSWORD_BCRYPT, $options);
+		if (!$result || strlen($result) < 60) throw new \RuntimeException(
 			'['.__CLASS__.'] Hash computed by `password_hash()` is invalid.'
 		);
 		return $result;
