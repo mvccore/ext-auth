@@ -20,15 +20,6 @@ class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfa
 
 	use \MvcCore\Ext\Auth\Traits\SignForm;
 
-	/** @var string */
-	public $Id = 'authentication';
-
-	/** @var string */
-	public $CssClass = 'sign-out';
-
-	/** @var string */
-	public $Method = \MvcCore\Ext\Form::METHOD_POST;
-
 	/** @var \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser */
 	protected $user = NULL;
 
@@ -40,7 +31,7 @@ class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfa
 	public function Init () {
 		parent::Init();
 
-		$this->addSuccessAndErrorUrlHiddenControls();
+		$this->initAuthFormPropsAndHiddenControls();
 
 		$this->AddField(new Form\SubmitButton(array(
 			'name'			=> 'send',
@@ -48,7 +39,7 @@ class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfa
 			'cssClasses'	=> array('button'),
 		)));
 
-		$this->user = Auth::GetInstance()->GetUser();
+		$this->user = $this->auth->GetUser();
 
 		return $this;
 	}
@@ -62,7 +53,7 @@ class SignOutForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfa
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
 		if ($this->Result === Form::RESULT_SUCCESS) {
-			$userClass = Auth::GetInstance()->GetConfig()->userClass;
+			$userClass = $this->auth->GetUserClass();
 			$userClass::LogOut();
 		}
 		$this->SetSuccessUrl($this->Data['successUrl']);

@@ -16,21 +16,26 @@ namespace MvcCore\Ext\Auth\Traits;
 trait SignForm
 {
 	/**
+	 * @var \MvcCore\Ext\Auth|\MvcCore\Ext\Interfaces\IAuth
+	 */
+	protected $auth = NULL;
+
+	/**
 	 * Add success and error url which are used
 	 * to redirect user to success url or error url
 	 * after form is submitted.
 	 * @return void
 	 */
-	protected function addSuccessAndErrorUrlHiddenControls () {
-		$cfg = \MvcCore\Ext\Auth::GetInstance()->GetConfig();
+	protected function initAuthFormPropsAndHiddenControls () {
+		$this->auth = \MvcCore\Ext\Auth::GetInstance();
 		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'successUrl',
-			'value'			=> $cfg->signedInUrl,
+			'value'			=> $this->auth->GetSignedInUrl(),
 			'validators'	=> array('Url'),
 		)));
 		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'errorUrl',
-			'value'			=> $cfg->signErrorUrl,
+			'value'			=> $this->auth->GetSignErrorUrl(),
 			'validators'	=> array('Url'),
 		)));
 	}

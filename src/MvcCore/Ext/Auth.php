@@ -29,6 +29,16 @@ class Auth
 	public function __construct ($config = array()) {
 		// set up possible configuration
 		if ($config) $this->SetConfiguration($config);
+		// initialize classes configuration
+		$baseClassName = '\\' . __CLASS__ . '\\';
+		if ($this->controllerClass && substr($this->controllerClass, 0, 1) != '\\')
+			$this->controllerClass = $baseClassName . $this->controllerClass;
+		if ($this->signInFormClass && substr($this->signInFormClass, 0, 1) != '\\')
+			$this->signInFormClass = $baseClassName . $this->signInFormClass;
+		if ($this->signOutFormClass && substr($this->signOutFormClass, 0, 1) != '\\')
+			$this->signOutFormClass = $baseClassName . $this->signOutFormClass;
+		if ($this->userClass && substr($this->userClass, 0, 1) != '\\')
+			$this->userClass = $baseClassName . $this->userClass;
 		// set up application reference
 		$this->application = & \MvcCore\Application::GetInstance();
 		// set up tools class
@@ -67,56 +77,12 @@ class Auth
 	 */
 	protected function preRouteHandler () {
 		$this->GetUser();
-		$requestMethod = $this->application->GetRequest()->GetMethod();
-		if ($requestMethod == \MvcCore\Interfaces\IRequest::METHOD_POST) {
-			$this->preRouteHandlerSetUpRoutes();
+		if (
+			$this->addRoutesForAnyRequestMethod ||
+			$this->application->GetRequest()->GetMethod() == \MvcCore\Interfaces\IRequest::METHOD_POST
+		) {
 			$this->preRouteHandlerSetUpUrlAdresses();
 			$this->preRouteHandlerSetUpRouter();
-		}
-	}
-
-	/**
-	 * Second prepare handler internal method:
-	 * - If controller class begins with substring containing this
-	 *   authentication class name, then it is obvious that controller
-	 *   has to have in route definition full class name defined by slash
-	 *   character in class name begin - so correct this controller class
-	 *   name if necessary to set up routes properly immediately on lines bellow.
-	 * - If configured singin/out routes are still strings only, create
-	 *   from those strings new \MvcCore\Route instances into the same config
-	 *   place to add them into router immediately on lines bellow.
-	 * @return void
-	 */
-	protected function preRouteHandlerSetUpRoutes () {
-		$authControllerClass = & $this->controllerClass;
-		if (strpos($authControllerClass, get_called_class()) === 0) {
-			$authControllerClass = '\\'.$authControllerClass;
-		}
-		$authenticated = $this->IsAuthenticated();
-		if (!$authenticated)
-			$this->preRouteHandlerSetUpRoute($authControllerClass.':SignIn', 'signInRoute');
-		if ($authenticated)
-			$this->preRouteHandlerSetUpRoute($authControllerClass.':SignOut', 'signOutRoute');
-	}
-
-	/**
-	 * Prepare configured route record into route instance if record is string or array.
-	 * @param string $authCtrlAndActionName
-	 * @param string $routeName
-	 * @return void
-	 */
-	protected function preRouteHandlerSetUpRoute ($authCtrlAndActionName, $routeName) {
-		$route = & $this->$routeName;
-		if ($route instanceof \MvcCore\Interfaces\IRoute) {
-			$this->$routeName = & $route;
-		} else {
-			$routeClass = $this->application->GetRouteClass();
-			$routeInitData = array('name' => $authCtrlAndActionName);
-			$this->$routeName = $routeClass::GetInstance(
-				gettype($route) == 'array'
-					? array_merge($routeInitData, $route)
-					: array_merge(array('pattern' => $route), $routeInitData)
-			);
 		}
 	}
 
@@ -143,38 +109,70 @@ class Auth
 	 */
 	protected function preRouteHandlerSetUpRouter () {
 		$routerClass = $this->application->GetRouterClass();
+		$router = & $routerClass::GetInstance();
 		if ($this->IsAuthenticated()) {
-			$routerClass::GetInstance()->AddRoute(
-				$this->signOutRoute, TRUE
+			$router->AddRoute(
+				$this->getInitializedRoute('signInRoute', 'SignIn'),
+				TRUE
 			);
 		} else {
-			$routerClass::GetInstance()->AddRoute(
-				$this->signInRoute, TRUE
+			$router->AddRoute(
+				$this->getInitializedRoute('signOutRoute', 'SignOut'),
+				TRUE
 			);
 		}
 	}
 
-	protected function initAuthForm () {
+	protected function initializeAuthForm () {
 		$controller = $this->application->GetController();
 		$routerClass = $this->application->GetRouterClass();
 		$router = $routerClass::GetInstance();
-		$action = '';
 		$successUrl = '';
 		if ($this->IsAuthenticated()) {
 			$this->form = new \MvcCore\Ext\Auth\SignOutForm($controller);
-			$action = $router->Url($this->signOutRoute->GetName());
+			$route = $this->GetSignOutRoute();
 			$successUrl = $this->signedOutUrl;
+			$cssClass = 'sign-out';
 		} else {
 			$this->form = new \MvcCore\Ext\Auth\SignInForm($controller);
-			$action = $router->Url($this->signInRoute->GetName());
+			$route = $this->GetSignInRoute();
 			$successUrl = $this->signedInUrl;
+			$cssClass = 'sign-in';
 		}
+		$method = $route->GetMethod();
 		$this->form
-			->SetAction($action)
+			->SetId('authentication')
+			->SetCssClass($cssClass)
+			->SetMethod($method !== NULL ? $method : \MvcCore\Interfaces\IRequest::METHOD_POST)
+			->SetAction($router->Url($route->GetName()))
 			->SetSuccessUrl($successUrl)
 			->SetErrorUrl($this->signErrorUrl)
 			->SetTranslator($this->translator)
 			->Init();
+	}
+
+	/**
+	 * Prepare configured route record into route instance if record is string or array.
+	 * @param string $routeName
+	 * @param string $actionName
+	 * @return \MvcCore\Route|\MvcCore\Interfaces\IRoute
+	 */
+	protected function getInitializedRoute ($actionName) {
+		$routeName = lcfirst($actionName) . 'Route';
+		$rawRoute = & $this->$routeName;
+		if ($rawRoute instanceof \MvcCore\Interfaces\IRoute) {
+			$route = & $rawRoute;
+		} else {
+			$routeClass = $this->application->GetRouteClass();
+			$routeInitData = array('name' => $this->controllerClass . ':' . $actionName);
+			$route = $routeClass::GetInstance(
+				gettype($rawRoute) == 'array'
+					? array_merge($routeInitData, $rawRoute)
+					: array_merge(array('pattern' => $rawRoute), $routeInitData)
+			);
+		}
+		$this->$routeName = & $route;
+		return $this->$routeName;
 	}
 
 	/**

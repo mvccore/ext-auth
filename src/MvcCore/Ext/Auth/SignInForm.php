@@ -20,15 +20,6 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 
 	use \MvcCore\Ext\Auth\Traits\SignForm;
 
-	/** @var string */
-	public $Id = 'authentication';
-
-	/** @var string */
-	public $CssClass = 'sign-in';
-
-	/** @var string */
-	public $Method = \MvcCore\Ext\Form::METHOD_POST;
-
 	/**
 	 * Initialize all form fields, initialize hidden field with
 	 * sourceUrl for cases when in request params is any source url param.
@@ -38,7 +29,7 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 	public function Init () {
 		parent::Init();
 
-		$this->addSuccessAndErrorUrlHiddenControls();
+		$this->initAuthFormPropsAndHiddenControls();
 
 		$this->AddField(new Form\Text(array(
 			'name'			=> 'username',
@@ -54,7 +45,7 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 			'cssClasses'	=> array('button'),
 		)));
 
-		$sourceUrl = \MvcCore\Application::GetInstance()->GetRequest()
+		$sourceUrl = $this->application->GetRequest()
 			->GetParam('sourceUrl', '.*', '', 'string');
 		$sourceUrl = filter_var(rawurldecode($sourceUrl), FILTER_VALIDATE_URL);
 
@@ -79,12 +70,12 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 		if ($this->Result === Form::RESULT_SUCCESS) {
 			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:
-			$userClass = Auth::GetInstance()->GetConfig()->userClass;
+			$userClass = $this->auth->GetUserClass();
 			$user = $userClass::LogIn(
 				$this->Data['username'], $this->Data['password']
 			);
 			if ($user === NULL) $this->AddError(
-				'User name or password is incorrect.', 
+				'User name or password is incorrect.',
 				array('username', 'password')
 			);
 		}
