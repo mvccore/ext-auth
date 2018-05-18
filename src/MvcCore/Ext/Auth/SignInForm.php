@@ -80,10 +80,8 @@ class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfac
 			);
 		}
 		$data = (object) $this->Data;
-		$this->SuccessUrl = $data->sourceUrl
-			? $data->sourceUrl
-			: $data->successUrl;
-		$this->ErrorUrl = $data->errorUrl;
+		$this->SetSuccessUrl($data->sourceUrl ? $data->sourceUrl : $data->successUrl);
+		$this->SetErrorUrl($data->errorUrl);
 		if ($this->Result !== Form::RESULT_SUCCESS) sleep(3);
 		return array(
 			$this->Result,

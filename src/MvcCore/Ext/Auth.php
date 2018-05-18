@@ -112,39 +112,42 @@ class Auth
 		$router = & $routerClass::GetInstance();
 		if ($this->IsAuthenticated()) {
 			$router->AddRoute(
-				$this->getInitializedRoute('signInRoute', 'SignIn'),
-				TRUE
+				$this->getInitializedRoute('SignOut'), TRUE
 			);
 		} else {
 			$router->AddRoute(
-				$this->getInitializedRoute('signOutRoute', 'SignOut'),
-				TRUE
+				$this->getInitializedRoute('SignIn'), TRUE
 			);
 		}
 	}
 
 	protected function initializeAuthForm () {
-		$controller = $this->application->GetController();
+		$controller = & $this->application->GetController();
 		$routerClass = $this->application->GetRouterClass();
-		$router = $routerClass::GetInstance();
+		$router = & $routerClass::GetInstance();
 		$successUrl = '';
 		if ($this->IsAuthenticated()) {
 			$this->form = new \MvcCore\Ext\Auth\SignOutForm($controller);
-			$route = $this->GetSignOutRoute();
+			$route = $this->getInitializedRoute('SignOut');
 			$successUrl = $this->signedOutUrl;
 			$cssClass = 'sign-out';
 		} else {
 			$this->form = new \MvcCore\Ext\Auth\SignInForm($controller);
-			$route = $this->GetSignInRoute();
+			$route = $this->getInitializedRoute('SignIn');
 			$successUrl = $this->signedInUrl;
 			$cssClass = 'sign-in';
 		}
+		$routeName = $route->GetName();
+		$routerHasRoute = $router->HasRoute($routeName);
+		if (!$routerHasRoute) $router->AddRoute($route, FALSE, FALSE);
+		$actionUrl = $router->Url($routeName);
+		if (!$routerHasRoute) $router->RemoveRoute($routeName);
 		$method = $route->GetMethod();
 		$this->form
 			->SetId('authentication')
 			->SetCssClass($cssClass)
 			->SetMethod($method !== NULL ? $method : \MvcCore\Interfaces\IRequest::METHOD_POST)
-			->SetAction($router->Url($route->GetName()))
+			->SetAction($actionUrl)
 			->SetSuccessUrl($successUrl)
 			->SetErrorUrl($this->signErrorUrl)
 			->SetTranslator($this->translator)
@@ -161,18 +164,18 @@ class Auth
 		$routeName = lcfirst($actionName) . 'Route';
 		$rawRoute = & $this->$routeName;
 		if ($rawRoute instanceof \MvcCore\Interfaces\IRoute) {
-			$route = & $rawRoute;
+			return $rawRoute;
 		} else {
 			$routeClass = $this->application->GetRouteClass();
-			$routeInitData = array('name' => $this->controllerClass . ':' . $actionName);
+			$routeInitData = array('controller' => $this->controllerClass, 'action' => $actionName);
 			$route = $routeClass::GetInstance(
 				gettype($rawRoute) == 'array'
 					? array_merge($routeInitData, $rawRoute)
 					: array_merge(array('pattern' => $rawRoute), $routeInitData)
 			);
+			$this->$routeName = & $route;
+			return $route;
 		}
-		$this->$routeName = & $route;
-		return $this->$routeName;
 	}
 
 	/**

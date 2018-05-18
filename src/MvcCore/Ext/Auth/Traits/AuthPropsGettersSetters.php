@@ -113,6 +113,7 @@ trait AuthPropsGettersSetters
 	 * @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute
 	 */
 	protected $signInRoute = array(
+		'name'		=> 'auth_signin',
 		'match'		=> '#^/signin(?=/$|$)#',
 		'reverse'	=> '/signin',
 		'method'	=> \MvcCore\Interfaces\IRequest::METHOD_POST
@@ -127,6 +128,7 @@ trait AuthPropsGettersSetters
 	 * @var string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute
 	 */
 	protected $signOutRoute = array(
+		'name'		=> 'auth_signout',
 		'match'		=> '#^/signout(?=/$|$)#',
 		'reverse'	=> '/signout',
 		'method'	=> \MvcCore\Interfaces\IRequest::METHOD_POST
@@ -459,7 +461,7 @@ trait AuthPropsGettersSetters
 		$this->signInRoute = $signInRoute;
 		$method = NULL;
 		if (gettype($signInRoute) == 'array' && isset($signInRoute['method']))
-			$method = $signInRoute['method'];
+			$method = strtoupper($signInRoute['method']);
 		if ($signInRoute instanceof \MvcCore\Interfaces\IRoute)
 			$method = $signInRoute->GetMethod();
 		if ($method !== \MvcCore\Interfaces\IRequest::METHOD_POST)
@@ -489,7 +491,7 @@ trait AuthPropsGettersSetters
 		$this->signOutRoute = $signOutRoute;
 		$method = NULL;
 		if (gettype($signOutRoute) == 'array' && isset($signOutRoute['method']))
-			$method = $signOutRoute['method'];
+			$method = strtoupper($signOutRoute['method']);
 		if ($signOutRoute instanceof \MvcCore\Interfaces\IRoute)
 			$method = $signOutRoute->GetMethod();
 		if ($method !== \MvcCore\Interfaces\IRequest::METHOD_POST)
@@ -595,7 +597,7 @@ trait AuthPropsGettersSetters
 				$this->$setter($value);
 			} else if ($throwExceptionMissingKeys) {
 				throw new \InvalidArgumentException (
-					'['.__CLASS__.'] Property `'.$key."` doesn't method_exists in class `".get_class($this).'`.'
+					'['.__CLASS__.'] Property `'.$key.'` has no setter method `'.$setter.'` in class `'.get_class($this).'`.'
 				);
 			}
 		}
@@ -610,7 +612,7 @@ trait AuthPropsGettersSetters
 	public function & SetTableStructureForDbUsers ($tableName = NULL, $columnNames = NULL) {
 		$userClass = $this->userClass;
 		$toolClass = static::$toolClass;
-		if ($toolClass::CheckClassInterface($userClass, 'MvcCore\Ext\Auth\Interfaces\IDatabaseUser', TRUE)) {
+		if ($toolClass::CheckClassInterface($userClass, 'MvcCore\Ext\Auth\Interfaces\IDatabaseUser', TRUE, TRUE)) {
 			$userClass::SetUsersTableStructure($tableName, $columnNames);
 		};
 		return $this;
