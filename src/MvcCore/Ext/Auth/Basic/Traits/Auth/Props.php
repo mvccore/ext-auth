@@ -10,7 +10,7 @@ trait Props
 
 	/**
 	 * Singleton instance of authentication extension module.
-	 * @var \MvcCore\Ext\Auth\Basic|NULL
+	 * @var \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth|NULL
 	 */
 	protected static $instance = NULL;
 
@@ -52,54 +52,69 @@ trait Props
 
 	/**
 	 * Full class name to use for user instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IUser`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\User`.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IUser`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\User`.
 	 * @var string
 	 */
 	protected $userClass = 'User';
 
 	/**
-	 * Full class name to use for controller instance to submit sign in form.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\ISignOutController`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignOutController`.
+	 * Full class name to use for controller instance
+	 * to submit auth form(s). Class name has to implement interfaces:
+	 * - `\MvcCore\Ext\Auth\Basic\Interfaces\IController`
+	 * - `\MvcCore\Interfaces\IController`
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\Controller`.
 	 * @var string
 	 */
-	protected $controllerClass = 'AuthController';
+	protected $controllerClass = 'Controller';
 
 	/**
 	 * Full class name to use for sign in form instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignInform`.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\SignInForm`.
 	 * @var string
 	 */
 	protected $signInFormClass = 'SignInForm';
 
 	/**
 	 * Full class name to use for sign out form instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignOutForm`.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * Default value after auth module init is
+	  * configured to `\MvcCore\Ext\Auth\Basic\SignOutForm`.
 	 * @var string
 	 */
 	protected $signOutFormClass = 'SignOutForm';
 
 	/**
-	 * Full url to redirect user, after sign in POST request was successful.
-	 * If `NULL` (by default), user will be redirected to the same url, where was sign in form rendered.
+	 * Full url to redirect user, after sign in
+	 * POST request was successful.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign in form rendered.
 	 * @var string|NULL
 	 */
 	protected $signedInUrl = NULL;
 
 	/**
-	 * Full url to redirect user, after sign out POST request was successful.
-	 * If `NULL` (by default), user will be redirected to the same url, where was sign out form rendered.
+	 * Full url to redirect user, after sign out
+	 * POST request was successful.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign out form rendered.
 	 * @var string|NULL
 	 */
 	protected $signedOutUrl = NULL;
 
 	/**
-	 * Full url to redirect user, after sign in or sign out POST request was not successful,
+	 * Full url to redirect user, after sign in POST
+	 * request or sign out POST request was not successful,
 	 * for example wrong credentials.
-	 * If `NULL` (by default), user will be redirected to the same url, where was sign in/out form rendered.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign in/out form rendered.
 	 * @var string|NULL
 	 */
 	protected $signErrorUrl = NULL;
@@ -120,7 +135,7 @@ trait Props
 	);
 
 	/**
-	 * Route to submit sign out form to.
+	 * Route to submit sign out form into.
 	 * It could be defined only as a string (route pattern),
 	 * or as route configuration array or as route instance.
 	 * Default match/reverse pattern for route sign request is
@@ -143,9 +158,17 @@ trait Props
 	protected $passwordHashSalt = NULL;
 
 	/**
-	 * Callable to set into sign in/out form translator to translate
-	 * form labels, placeholders and buttons.
-	 * Default value is `NULL` to not translate anything.
+	 * Timeout to `sleep();` PHP script before sending response to user,
+	 * when user submitted invalid username or password.
+	 * Default value is `3` (3 seconds).
+	 * @var int
+	 */
+	protected $invalidCredentialsTimeout = 3;
+
+	/**
+	 * Callable translator to set it into auth form
+	 * to translate form labels, placeholders, buttons or error messages.
+	 * Default value is `NULL` (forms without translations).
 	 * @var callable|NULL
 	 */
 	protected $translator = NULL;
@@ -165,15 +188,16 @@ trait Props
 
 	/**
 	 * User model instace or `NULL` if user has no username record in session namespace.
-	 * @var \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser
+	 * @var \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser|NULL
 	 */
 	protected $user = NULL;
 
 	/**
-	 * Sign in or sign out form instance.
+	 * Sign in form instance, sign out form instance or any
+	 * other authentication form instance in extended classes.
 	 * If user is authenticated by username record in session namespace,
-	 * there is completed sign out form, if not authenticated, sign in form otherwise.
-	 * @var \MvcCore\Ext\Auth\Basic\Traits\AuthForm|\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm|\MvcCore\Ext\Auth\Basic\SignInForm|\MvcCore\Ext\Auth\Basic\SignOutForm
+	 * there is completed sign out form, if not authenticated, sign in form otherwise etc...
+	 * @var \MvcCore\Ext\Auth\Basic\Traits\Form|\MvcCore\Ext\Auth\Basic\Interfaces\IForm|\MvcCore\Ext\Auth\Basic\SignInForm|\MvcCore\Ext\Auth\Basic\SignOutForm
 	 */
 	protected $form = NULL;
 

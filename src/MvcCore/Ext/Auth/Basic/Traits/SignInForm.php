@@ -77,7 +77,8 @@ trait SignInForm
 		$data = (object) $this->Data;
 		$this->SetSuccessUrl($data->sourceUrl ? $data->sourceUrl : $data->successUrl);
 		$this->SetErrorUrl($data->errorUrl);
-		if ($this->Result !== \MvcCore\Ext\Form::RESULT_SUCCESS) sleep(3);
+		if ($this->Result !== \MvcCore\Ext\Form::RESULT_SUCCESS)
+			sleep($this->auth->GetInvalidCredentialsTimeout());
 		return array(
 			$this->Result,
 			$this->Data,

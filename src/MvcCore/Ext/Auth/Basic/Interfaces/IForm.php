@@ -5,6 +5,8 @@ namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
 interface IForm
 {
+	const ID = 'authentication';
+
 	public function & SetId ($id = '');
 	public function & SetCssClass ($cssClass = '');
 	public function & SetMethod ($method = '');

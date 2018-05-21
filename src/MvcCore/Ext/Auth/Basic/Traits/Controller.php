@@ -23,7 +23,7 @@ trait Controller
 	 */
 	public function SignInAction () {
 		/** @var $form \MvcCore\Ext\Auth\Basic\SignInForm */
-		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
+		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetSignInForm();
 		list ($result,) = $form->Submit();
 		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
 			// here you can count bad login requests
@@ -42,7 +42,7 @@ trait Controller
 	 */
 	public function SignOutAction () {
 		/** @var $form \MvcCore\Ext\Auth\Basic\SignOutForm */
-		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
+		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetSignOutForm();
 		$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();

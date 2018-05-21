@@ -9,119 +9,124 @@ trait Setters
 	 ***********************************************************************************/
 
 	/**
-	 * Set authorization expiration seconds, 10 minutes by default.
+	 * Set expiration time (in seconds) how long to remember the user in session.
+	 * You can use zero (`0`) to browser close moment, but some browsers can
+	 * restore previous session after next browser application start. Or any
+	 * colleague in your project could use session for storing any information
+	 * for some longer time in your application and session cookie could then
+	 * exists much longer then browser close moment only.
+	 * So better is not to use a zero value.
+	 * Default value is 10 minutes (600 seconds).
 	 * @param int $expirationSeconds
-	 * @return \MvcCore\Ext\Auth
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetExpirationSeconds ($expirationSeconds = 600) {
 		$this->expirationSeconds = $expirationSeconds;
 		return $this;
 	}
 
-
 	/**
-	 * Set user's passwords hash salt, put here any string, every request the same.
-	 * @param string $passwordHashSalt
-	 * @return \MvcCore\Ext\Auth
-	 */
-	public function & SetPasswordHashSalt ($passwordHashSalt = '') {
-		$this->passwordHashSalt = $passwordHashSalt;
-		return $this;
-	}
-
-	/**
-	 * Set authorization service user class
-	 * to get store username from session stored from previous
-	 * requests for 10 minutes by default, by sign in action to compare
-	 * sender credentials with any user from your custom place
-	 * and by sign out action to remove username from session.
-	 * It has to extend \MvcCore\Ext\Auth\Abstracts\User.
-	 * @param string $userClass
-	 * @return \MvcCore\Ext\Auth
+	 * Set full class name to use for user instance.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IUser`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\User`.
+	 * @param string $userClass User full class name implementing `\MvcCore\Ext\Auth\Basic\Interfaces\IUser`.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetUserClass ($userClass = '') {
-		$this->userClass = $this->checkClassExistence($userClass);
+		$this->userClass = $this->checkClassImplementation(
+			$userClass, \MvcCore\Ext\Auth\Basic\Interfaces\IUser::class, TRUE
+		);
 		return $this;
 	}
 
 	/**
-	 * Set authorization service controller class
-	 * to handle signin and signout actions,
-	 * it has to extend \MvcCore\Ext\Auth\Abstracts\Controller.
-	 * @param string $controllerClass
-	 * @return \MvcCore\Ext\Auth
+	 * Set full class name to use for controller instance
+	 * to submit auth form(s). Class name has to implement interfaces:
+	 * - `\MvcCore\Ext\Auth\Basic\Interfaces\IController`
+	 * - `\MvcCore\Interfaces\IController`
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\Controller`.
+	 * @param string $controllerClass Controller full class name implementing `\MvcCore\Ext\Auth\Basic\Interfaces\IController`.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetControllerClass ($controllerClass = '') {
-		$this->controllerClass = $this->checkClassExistence($controllerClass);
+		$controllerClass = $this->checkClassImplementation(
+			$controllerClass, \MvcCore\Ext\Auth\Basic\Interfaces\IController::class, FALSE
+		);
+		$this->controllerClass = $this->checkClassImplementation(
+			$controllerClass, \MvcCore\Interfaces\IController::class, TRUE
+		);
 		return $this;
 	}
 
 	/**
-	 * Set authorization service sign in form class,
-	 * to create, render and submit sign in user.
-	 * it has to implement \MvcCore\Ext\Auth\Abstracts\Form.
-	 * @param string $signInFormClass
-	 * @return \MvcCore\Ext\Auth
+	 * Set full class name to use for sign in form instance.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\SignInForm`.
+	 * @param string $signInFormClass Form full class name implementing `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetSignInFormClass ($signInFormClass = '') {
-		$this->signInFormClass = $this->checkClassExistence($signInFormClass);
+		$this->signInFormClass = $this->checkClassImplementation(
+			$signInFormClass, \MvcCore\Ext\Auth\Basic\Interfaces\IForm::class, FALSE
+		);
 		return $this;
 	}
 
 	/**
-	 * Set authorization service sign out form class,
-	 * to create, render and submit sign out user.
-	 * it has to implement \MvcCore\Ext\Auth\Abstracts\Form.
-	 * @param string $signInFormClass
-	 * @return \MvcCore\Ext\Auth
+	 * Set full class name to use for sign out form instance.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basic\SignOutForm`.
+	 * @param string $signInFormClass Form full class name implementing `\MvcCore\Ext\Auth\Basic\Interfaces\IForm`.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetSignOutFormClass ($signOutFormClass = '') {
-		$this->signOutFormClass = $this->checkClassExistence($signOutFormClass);
+		$this->signOutFormClass = $this->checkClassImplementation(
+			$signOutFormClass, \MvcCore\Ext\Auth\Basic\Interfaces\IForm::class, FALSE
+		);
 		return $this;
 	}
 
 	/**
-	 * Set translator callable if you want to translate
-	 * sign in and sign out forms labels, placeholders and error messages.
-	 * @param callable $translator
-	 * @return \MvcCore\Ext\Auth
+	 * Set full url to redirect user, after sign in
+	 * POST request was successful.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign in form rendered.
+	 * @param string|NULL $signedInUrl
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
-	public function & SetTranslator (callable $translator = NULL) {
-		$this->translator = $translator;
-		return $this;
-	}
-
-	/**
-	 * Set url to redirect user after sign in process was successfull.
-	 * By default signed in url is the same as current request url,
-	 * internaly configured by default authentication service pre request handler.
-	 * @param string $signedInUrl
-	 * @return \MvcCore\Ext\Auth
-	 */
-	public function & SetSignedInUrl ($signedInUrl ='') {
+	public function & SetSignedInUrl ($signedInUrl = NULL) {
 		$this->signedInUrl = $signedInUrl;
 		return $this;
 	}
 
 	/**
-	 * Set url to redirect user after sign out process was successfull.
-	 * By default signed out url is the same as current request url,
-	 * internaly configured by default authentication service pre request handler.
-	 * @param string $signedOutUrl
-	 * @return \MvcCore\Ext\Auth
+	 * Set full url to redirect user, after sign out
+	 * POST request was successful.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign out form rendered.
+	 * @param string|NULL $signedOutUrl
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
-	public function & SetSignedOutUrl ($signedOutUrl ='') {
+	public function & SetSignedOutUrl ($signedOutUrl = NULL) {
 		$this->signedOutUrl = $signedOutUrl;
 		return $this;
 	}
 
 	/**
-	 * Set url to redirect user after sign in or sign out process was
-	 * not successfull. By default signed in/out error url is the same as
-	 * current request url, internaly configured by default
-	 * authentication service pre request handler.
-	 * @param string $signErrorUrl
-	 * @return \MvcCore\Ext\Auth
+	 * Set full url to redirect user, after sign in POST
+	 * request or sign out POST request was not successful,
+	 * for example wrong credentials.
+	 * If `NULL` (by default), user will be redirected
+	 * to the same url, where was sign in/out form rendered.
+	 * @param string|NULL $signErrorUrl
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetSignErrorUrl ($signErrorUrl = NULL) {
 		$this->signErrorUrl = $signErrorUrl;
@@ -129,15 +134,10 @@ trait Setters
 	}
 
 	/**
-	 * Set sign in route, where to navigate user browser after
-	 * user clicks on submit button in sign in form and
-	 * where to run authentication process.
-	 * Route shoud be any pattern string without any groups,
-	 * or route configuration array/stdClass or \MvcCore\Route
-	 * instance. Sign in route is prepended before all routes
-	 * in default service preroute handler.
-	 * @param string|array|\MvcCore\Interfaces\IRoute $signInRoute
-	 * @return \MvcCore\Ext\Auth
+	 * Set route instance to submit sign in form into.
+	 * Default configured route for sign in request is `/signin` by POST.
+	 * @param string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute $signInRoute
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetSignInRoute ($signInRoute = NULL) {
 		$this->signInRoute = $signInRoute;
@@ -152,15 +152,10 @@ trait Setters
 	}
 
 	/**
-	 * Set sign out route, where to navigate user browser after
-	 * user clicks on submit button in sign out form and
-	 * where to run deauthentication process.
-	 * Route shoud be any pattern string without any groups,
-	 * or route configuration array/stdClass or \MvcCore\Route
-	 * instance. Sign out route is prepended before all routes
-	 * in default service preroute handler.
-	 * @param string|array|\MvcCore\Interfaces\IRoute $signOutRoute
-	 * @return \MvcCore\Ext\Auth
+	 * Set route to submit sign out form into.
+	 * Default configured route for sign in request is `/signout` by POST.
+	 * @param string|array|\MvcCore\Route|\MvcCore\Interfaces\IRoute $signOutRoute
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetSignOutRoute ($signOutRoute = NULL) {
 		$this->signOutRoute = $signOutRoute;
@@ -175,43 +170,80 @@ trait Setters
 	}
 
 	/**
-	 * Set user instance by you custom external authorization service.
-	 * @param \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser $user
-	 * @return \MvcCore\Ext\Auth
+	 * Set configured salt for `passord_hash();` to generate password by `PASSWORD_BCRYPT`.
+	 * `NULL` by default. This option is the only one option required
+	 * to configure authentication module to use it properly.
+	 * @param string $passwordHashSalt
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
-	public function & SetUser (\MvcCore\Ext\Auth\Interfaces\IUser & $user) {
+	public function & SetPasswordHashSalt ($passwordHashSalt = '') {
+		$this->passwordHashSalt = $passwordHashSalt;
+		return $this;
+	}
+
+	/**
+	 * Set timeout to `sleep();` PHP script before sending response to user,
+	 * when user submitted invalid username or password.
+	 * Default value is `3` (3 seconds).
+	 * @param int $seconds
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+	 */
+	public function & SetInvalidCredentialsTimeout ($seconds = 3) {
+		$this->invalidCredentialsTimeout = $seconds;
+		return $this;
+	}
+
+	/**
+	 * Set callable translator to set it into auth form
+	 * to translate form labels, placeholders or buttons.
+	 * Default value is `NULL` (forms without translations).
+	 * @param callable $translator
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+	 */
+	public function & SetTranslator (callable $translator = NULL) {
+		$this->translator = $translator;
+		return $this;
+	}
+
+	/**
+	 * Set user instance manualy. If you use this method
+	 * no authentication by `{$configuredUserClass}::SetUpUserBySession();`
+	 * is used and authentication state is always positive.
+	 * @param \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser|NULL $user
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+	 */
+	public function & SetUser (\MvcCore\Ext\Auth\Basic\Interfaces\IUser & $user = NULL) {
 		$this->user = $user;
 		$this->userInitialized = TRUE;
 		return $this;
 	}
 
 	/**
-	 * Set sign in/sign out form instance.
-	 * Use this method only if you need sometimes to
-	 * complete different form to render.
-	 * @param \MvcCore\Ext\Auth\SignInForm|\MvcCore\Ext\Auth\SignOutForm|\MvcCore\Ext\Auth\Traits\SignForm|\MvcCore\Ext\Auth\Interfaces\ISignForm $form
-	 * @return \MvcCore\Ext\Auth
+	 * Set sign in, sign out or any authentication form instance.
+	 * Use this method only if you need sometimes to complete different form to render.
+	 * @param \MvcCore\Ext\Auth\Basic\SignInForm|\MvcCore\Ext\Auth\Basic\SignOutForm|\MvcCore\Ext\Auth\Basic\Traits\Form|\MvcCore\Ext\Auth\Basic\Interfaces\IForm $form
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
-	public function & SetForm (\MvcCore\Ext\Auth\Interfaces\ISignForm & $form) {
+	public function & SetForm (\MvcCore\Ext\Auth\Basic\Interfaces\IForm & $form) {
 		$this->form = $form;
 		return $this;
 	}
 
 	/**
-	 * Set up authorization service configuration.
-	 * Each array key must have key by default configuration item.
-	 * If configuration item is class, it's checked if it exists.
-	 * @param array $configuration
-	 * @param bool $throwExceptionMissingKeys
+	 * Set up authorization module configuration.
+	 * Each array key has to be key by protected configuration property in this class.
+	 * All properties are one by one configured by it's setter method.
+	 * @param array $configuration Keys by protected properties names in camel case.
+	 * @param bool $throwExceptionIfPropertyIsMissing
 	 * @throws \InvalidArgumentException
-	 * @return \MvcCore\Ext\Auth
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
-	public function & SetConfiguration ($configuration = array(), $throwExceptionMissingKeys = FALSE) {
+	public function & SetConfiguration ($configuration = array(), $throwExceptionIfPropertyIsMissing = TRUE) {
 		foreach ($configuration as $key => & $value) {
 			$setter = 'Set' . ucfirst($key);
 			if (method_exists($this, $setter)) {
 				$this->$setter($value);
-			} else if ($throwExceptionMissingKeys) {
+			} else if ($throwExceptionIfPropertyIsMissing) {
 				throw new \InvalidArgumentException (
 					'['.__CLASS__.'] Property `'.$key.'` has no setter method `'.$setter.'` in class `'.get_class($this).'`.'
 				);
@@ -221,16 +253,37 @@ trait Setters
 	}
 
 	/**
-	 * Alias for `\MvcCore\Ext\Auth\Users\Database::SetUsersTableStructure($tableName, $columnNames);`.
-	 * @param string|NULL	$tableName
-	 * @param string[]|NULL	$columnNames
+	 * Optional alias method if you have user class configured
+	 * to database user: `\MvcCore\Ext\Auth\Basic\Users\Database`.
+	 * Alias for `\MvcCore\Ext\Auth\Basic\Users\Database::SetUsersTableStructure($tableName, $columnNames);`.
+	 * @param string|NULL	$tableName Database table name.
+	 * @param string[]|NULL	$columnNames Keys are user class protected properties names in camel case, values are database columns names.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public function & SetTableStructureForDbUsers ($tableName = NULL, $columnNames = NULL) {
 		$userClass = $this->userClass;
 		$toolClass = static::$toolClass;
-		if ($toolClass::CheckClassInterface($userClass, 'MvcCore\Ext\Auth\Interfaces\IDatabaseUser', TRUE, TRUE)) {
+		if ($toolClass::CheckClassInterface($userClass, \MvcCore\Ext\Auth\Basic\Interfaces\IDatabaseUser::class, TRUE, TRUE)) {
 			$userClass::SetUsersTableStructure($tableName, $columnNames);
 		};
 		return $this;
+	}
+
+	/**
+	 * Check if given class name implements given interface
+	 * and optionaly if test class implements static interface methods.
+	 * If not, thrown an `\InvalidArgumentException` every time.
+	 * @param string $testClassName Full test class name.
+	 * @param string $interfaceName Full interface class name.
+	 * @param bool $checkStaticMethods `FALSE` by default.
+	 * @throws \InvalidArgumentException
+	 * @return string
+	 */
+	protected function checkClassImplementation ($testClassName, $interfaceName, $checkStaticMethods = FALSE) {
+		$toolClass = static::$toolClass;
+		if ($toolClass::CheckClassInterface($testClassName, $interfaceName, $checkStaticMethods, TRUE)) {
+			return $testClassName;
+		}
+		return '';
 	}
 }

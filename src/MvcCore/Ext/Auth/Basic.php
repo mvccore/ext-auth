@@ -15,12 +15,22 @@ namespace MvcCore\Ext\Auth;
 
 /**
  * Responsibility - managing login/logout forms, authentication requests and user instance.
- * -
+ * - Basic extensible authentication module with sign in and sign out forms 
+ *   and automaticly initialized user instance stored in custom session namespace.
+ * - Possiblity to configure:
+ *   - submit routes to sign in and sign out
+ *   - submit success and submit error url addresses
+ *   - form classes
+ *   - forms submit's controller class
+ *   - user instance class
+ *   - wrong credentials timeout
+ *   - custom password hash salt
+ *   - translator and more...
  */
 class Basic implements \MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 {
 	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Props;
 	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Getters;
 	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Setters;
-	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Logic;
+	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Handling;
 }
