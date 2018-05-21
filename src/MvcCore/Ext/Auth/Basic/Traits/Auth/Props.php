@@ -60,19 +60,11 @@ trait Props
 
 	/**
 	 * Full class name to use for controller instance to submit sign in form.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\ISignInController`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignInController`.
-	 * @var string
-	 */
-	protected $signInCtrlClass = 'SignInController';
-
-	/**
-	 * Full class name to use for controller instance to submit sign in form.
 	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\ISignOutController`.
 	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignOutController`.
 	 * @var string
 	 */
-	protected $signOutCtrlClass = 'SignOutController';
+	protected $controllerClass = 'AuthController';
 
 	/**
 	 * Full class name to use for sign in form instance.

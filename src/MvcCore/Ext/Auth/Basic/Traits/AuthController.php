@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
-trait SignInController
+trait AuthController
 {
 	/**
 	 * Authentication form submit action to sign in.
@@ -30,6 +30,20 @@ trait SignInController
 			// to ban danger user for some time or anything else...
 
 		}
+		$form->ClearSession(); // to remove all submited data from session
+		$form->RedirectAfterSubmit();
+	}
+
+	/**
+	 * Authentication form submit action to sign out.
+	 * Routed by route configured by:
+	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
+	 * @return void
+	 */
+	public function SignOutAction () {
+		/** @var $form \MvcCore\Ext\Auth\Basic\SignOutForm */
+		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
+		$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();
 	}

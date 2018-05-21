@@ -55,18 +55,8 @@ trait Getters
 	 * it has to extend \MvcCore\Ext\Auth\Abstracts\Controller.
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function GetSignInCtrlClass () {
-		return $this->signInCtrlClass;
-	}
-
-	/**
-	 * Get authorization service controller class
-	 * to handle signin and signout actions,
-	 * it has to extend \MvcCore\Ext\Auth\Abstracts\Controller.
-	 * @return \MvcCore\Ext\Auth
-	 */
-	public function GetSignOutCtrlClass () {
-		return $this->signOutCtrlClass;
+	public function GetControllerClass () {
+		return $this->controllerClass;
 	}
 
 	/**

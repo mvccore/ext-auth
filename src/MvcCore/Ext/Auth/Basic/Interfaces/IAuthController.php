@@ -2,7 +2,8 @@
 
 namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
-interface ISignOutController
+interface IAuthController
 {
+	public function SignInAction ();
 	public function SignOutAction ();
 }
