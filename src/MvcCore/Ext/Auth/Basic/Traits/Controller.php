@@ -13,12 +13,15 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
+/**
+ * Responsibility - handle configured signin form and signout form submit requests.
+ */
 trait Controller
 {
 	/**
 	 * Authentication form submit action to sign in.
-	 * Routed by route configured by:
-	 * MvcCore\Ext\Auth::GetInstance()->SetSignInRoute();
+	 * Routed by configured route by:
+	 * `\MvcCore\Ext\Auth\Basic::GetInstance()->SetSignInRoute(...);`
 	 * @return void
 	 */
 	public function SignInAction () {
@@ -36,8 +39,8 @@ trait Controller
 
 	/**
 	 * Authentication form submit action to sign out.
-	 * Routed by route configured by:
-	 * MvcCore\Ext\Auth::GetInstance()->SetSignOutRoute();
+	 * Routed by configured route by:
+	 * `\MvcCore\Ext\Auth\Basic::GetInstance()->SetSignOutRoute(...);`
 	 * @return void
 	 */
 	public function SignOutAction () {

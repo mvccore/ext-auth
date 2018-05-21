@@ -13,6 +13,9 @@
 
 namespace MvcCore\Ext\Auth\Basic;
 
+/**
+ * Responsibility - handle configured signin form and signout form submit requests.
+ */
 class Controller
 	extends		\MvcCore\Controller
 	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IController,
