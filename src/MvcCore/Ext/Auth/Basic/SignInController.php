@@ -13,7 +13,9 @@
 
 namespace MvcCore\Ext\Auth\Basic;
 
-class SignController extends \MvcCore\Controller implements \MvcCore\Ext\Auth\Basic\Interfaces\ISignController
+class SignController
+	extends		\MvcCore\Controller
+	implements	\MvcCore\Ext\Auth\Basic\Interfaces\ISignInController
 {
-	use \MvcCore\Ext\Auth\Basic\Traits\SignController;
+	use			\MvcCore\Ext\Auth\Basic\Traits\SignInController;
 }

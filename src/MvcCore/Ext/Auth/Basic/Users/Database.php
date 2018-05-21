@@ -2,7 +2,7 @@
 
 namespace MvcCore\Ext\Auth\Users;
 
-class Database extends \MvcCore\Ext\Auth\Basic\User implements \MvcCore\Ext\Auth\Interfaces\IDatabaseUser
+class Database extends \MvcCore\Ext\Auth\Basic\User implements \MvcCore\Ext\Auth\Basic\Interfaces\IDatabaseUser
 {
 	protected static $usersTableStructure = array(
 		'table'		=> 'users',

@@ -13,26 +13,8 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
-trait SignController {
-	/**
-	 * Authentication form submit action to sign in.
-	 * Routed by route configured by:
-	 * MvcCore\Ext\Auth::GetInstance()->SetSignInRoute();
-	 * @return void
-	 */
-	public function SignInAction () {
-		/** @var $form \MvcCore\Ext\Auth\SignInForm */
-		$form = \MvcCore\Ext\Auth::GetInstance()->GetForm();
-		list ($result, $data, $errors) = $form->Submit();
-		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
-			// here you can count bad login requests
-			// to ban danger user for some time or anything else...
-
-		}
-		$form->ClearSession(); // to remove all submited data from session
-		$form->RedirectAfterSubmit();
-	}
-
+trait SignOutController
+{
 	/**
 	 * Authentication form submit action to sign out.
 	 * Routed by route configured by:
@@ -40,8 +22,8 @@ trait SignController {
 	 * @return void
 	 */
 	public function SignOutAction () {
-		/** @var $form \MvcCore\Ext\Auth\SignOutForm */
-		$form = \MvcCore\Ext\Auth::GetInstance()->GetForm();
+		/** @var $form \MvcCore\Ext\Auth\Basic\SignOutForm */
+		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
 		/*list ($result, $data, $errors) = */$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();

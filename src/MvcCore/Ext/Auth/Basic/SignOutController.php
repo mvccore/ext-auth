@@ -13,13 +13,9 @@
 
 namespace MvcCore\Ext\Auth\Basic;
 
-use \MvcCore\Ext\Auth,
-	\MvcCore\Ext\Form;
-
-class SignOutForm
-	extends		\MvcCore\Ext\Form
-	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm
+class SignOutController
+	extends		\MvcCore\Controller
+	implements	\MvcCore\Ext\Auth\Basic\Interfaces\ISignOutController
 {
-	use			\MvcCore\Ext\Auth\Basic\Traits\AuthForm;
-	use			\MvcCore\Ext\Auth\Basic\Traits\SignOutForm;
+	use			\MvcCore\Ext\Auth\Basic\Traits\SignOutController;
 }

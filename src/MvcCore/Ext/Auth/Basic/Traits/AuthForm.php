@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
-trait SignForm
+trait AuthForm
 {
 	/**
 	 * @var \MvcCore\Ext\Auth|\MvcCore\Ext\Interfaces\IAuth
@@ -27,7 +27,7 @@ trait SignForm
 	 * @return void
 	 */
 	protected function initAuthFormPropsAndHiddenControls () {
-		$this->auth = \MvcCore\Ext\Auth::GetInstance();
+		$this->auth = \MvcCore\Ext\Auth\Basic::GetInstance();
 		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'successUrl',
 			'value'			=> $this->auth->GetSignedInUrl(),

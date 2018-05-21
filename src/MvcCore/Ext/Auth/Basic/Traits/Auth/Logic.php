@@ -110,12 +110,12 @@ trait Logic
 		$router = & $routerClass::GetInstance();
 		$successUrl = '';
 		if ($this->IsAuthenticated()) {
-			$this->form = new \MvcCore\Ext\Auth\SignOutForm($controller);
+			$this->form = new \MvcCore\Ext\Auth\Basic\SignOutForm($controller);
 			$route = $this->getInitializedRoute('SignOut');
 			$successUrl = $this->signedOutUrl;
 			$cssClass = 'sign-out';
 		} else {
-			$this->form = new \MvcCore\Ext\Auth\SignInForm($controller);
+			$this->form = new \MvcCore\Ext\Auth\Basic\SignInForm($controller);
 			$route = $this->getInitializedRoute('SignIn');
 			$successUrl = $this->signedInUrl;
 			$cssClass = 'sign-in';

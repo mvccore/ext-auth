@@ -37,7 +37,7 @@ trait Auth
 	 */
 	public static function EncodePasswordToHash ($password = '', $options = array()) {
 		if (!isset($options['salt'])) {
-			$configuredSalt = \MvcCore\Ext\Auth::GetInstance()->GetPasswordHashSalt();
+			$configuredSalt = \MvcCore\Ext\Auth\Basic::GetInstance()->GetPasswordHashSalt();
 			if ($configuredSalt !== NULL) {
 				$options['salt'] = $configuredSalt;
 			} else {
@@ -70,7 +70,7 @@ trait Auth
 			$sessionClass = $app->GetSessionClass();
 			static::$userSessionNamespace = $sessionClass::GetNamespace(\MvcCore\Ext\Auth::class);
 			static::$userSessionNamespace->SetExpirationSeconds(
-				\MvcCore\Ext\Auth::GetInstance()->GetExpirationSeconds()
+				\MvcCore\Ext\Auth\Basic::GetInstance()->GetExpirationSeconds()
 			);
 		}
 		return static::$userSessionNamespace;
