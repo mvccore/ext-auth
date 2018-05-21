@@ -11,12 +11,16 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth;
+namespace MvcCore\Ext\Auth\Basic;
 
-class User extends \MvcCore\Model implements \MvcCore\Ext\Auth\Interfaces\IUser {
+class User extends \MvcCore\Model implements \MvcCore\Ext\Auth\Basic\Interfaces\IUser {
 
 	/** @var bool */
 	protected $autoInit = FALSE;
 
-	use \MvcCore\Ext\Auth\Traits\User;
+	use \MvcCore\Ext\Auth\Basic\Traits\User\Props;
+	use \MvcCore\Ext\Auth\Basic\Traits\User\Getters;
+	use \MvcCore\Ext\Auth\Basic\Traits\User\Setters;
+	use \MvcCore\Ext\Auth\Basic\Traits\User\Roles;
+	use \MvcCore\Ext\Auth\Basic\Traits\User\Auth;
 }

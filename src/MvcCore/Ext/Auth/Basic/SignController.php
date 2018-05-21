@@ -11,9 +11,9 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth;
+namespace MvcCore\Ext\Auth\Basic;
 
-class SignController extends \MvcCore\Controller implements \MvcCore\Ext\Auth\Interfaces\ISignController
+class SignController extends \MvcCore\Controller implements \MvcCore\Ext\Auth\Basic\Interfaces\ISignController
 {
-	use Traits\SignController;
+	use \MvcCore\Ext\Auth\Basic\Traits\SignController;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace MvcCore\Ext\Auth\Interfaces;
+namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
 interface IAuth
 {
@@ -15,7 +15,7 @@ interface IAuth
 	 * Return singleton instance. If instance exists, return existing instance,
 	 * if not, create new Auth module instance, store it and return it.
 	 * @param array $configuration Optional configuration passed into `__construct($configuration)` method.
-	 * @return \MvcCore\Ext\Auth\Interfaces\IAuth
+	 * @return \MvcCore\Ext\Auth\Basic\Interfaces\IAuthBasic
 	 */
 	public static function GetInstance ($configuration = array());
 }

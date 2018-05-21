@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Interfaces;
+namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
 interface IUser
 {

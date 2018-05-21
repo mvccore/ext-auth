@@ -11,14 +11,14 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth;
+namespace MvcCore\Ext\Auth\Basic;
 
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Interfaces\ISignForm {
+class SignInForm extends \MvcCore\Ext\Form implements \MvcCore\Ext\Auth\Basic\Interfaces\ISignForm {
 
-	use \MvcCore\Ext\Auth\Traits\SignForm;
+	use \MvcCore\Ext\Auth\Basic\Traits\SignForm;
 
 	/**
 	 * Initialize all form fields, initialize hidden field with

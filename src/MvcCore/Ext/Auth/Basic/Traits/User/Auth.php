@@ -1,74 +1,9 @@
 <?php
 
-/**
- * MvcCore
- *
- * This source file is subject to the BSD 3 License
- * For the full copyright and license information, please view
- * the LICENSE.md file that are distributed with this source code.
- *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
- */
+namespace MvcCore\Ext\Auth\Basic\Traits\User;
 
-namespace MvcCore\Ext\Auth\Traits;
-
-trait User {
-
-	/** @var int */
-	protected $id = NULL;
-
-	/** @var string */
-	protected $userName = NULL;
-
-	/** @var string */
-	protected $fullName = NULL;
-
-	/** @var string */
-	protected $passwordHash = NULL;
-
-	/** @var \MvcCore\Session */
-	protected static $userSessionNamespace = NULL;
-
-
-
-	public function GetId () {
-		return $this->id;
-	}
-
-	public function & SetId ($id) {
-		$this->id = $id;
-		return $this;
-	}
-
-	public function GetUserName () {
-		return $this->userName;
-	}
-
-	public function & SetUserName ($userName) {
-		$this->userName = $userName;
-		return $this;
-	}
-
-	public function GetFullName () {
-		return $this->fullName;
-	}
-
-	public function & SetFullName ($fullName) {
-		$this->fullName = $fullName;
-		return $this;
-	}
-
-	public function GetPasswordHash () {
-		return $this->passwordHash;
-	}
-
-	public function & SetPasswordHash ($passwordHash) {
-		$this->passwordHash = $passwordHash;
-		return $this;
-	}
-
-
+trait Auth
+{
 	public static function SetUpUserBySession () {
 		$userSessionNamespace = static::getUserSessionNamespace();
 		if (isset($userSessionNamespace->userName)) {
@@ -93,18 +28,6 @@ trait User {
 	 */
 	public static function LogOut () {
 		static::getUserSessionNamespace()->Destroy();
-	}
-	public function & GetRoles () {
-		return $this;
-	}
-	public function & SetRoles ($roles = array()){
-		return $this;
-	}
-	public function & AddRole ($role){
-		return $this;
-	}
-	public function & RemoveRole ($role){
-		return $this;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MvcCore\Ext\Auth\Interfaces;
+namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
 interface ISignForm
 {
