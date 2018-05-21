@@ -10,7 +10,7 @@ trait Props
 
 	/**
 	 * Singleton instance of authentication extension module.
-	 * @var \MvcCore\Ext\Auth|NULL
+	 * @var \MvcCore\Ext\Auth\Basic|NULL
 	 */
 	protected static $instance = NULL;
 
@@ -52,32 +52,40 @@ trait Props
 
 	/**
 	 * Full class name to use for user instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Interfaces\IUser`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\User`.
+	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IUser`.
+	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\User`.
 	 * @var string
 	 */
 	protected $userClass = 'User';
 
 	/**
-	 * Full class name to use for controller instance to submit sign in/out form.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Interfaces\ISignController`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\SignController`.
+	 * Full class name to use for controller instance to submit sign in form.
+	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\ISignInController`.
+	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignInController`.
 	 * @var string
 	 */
-	protected $controllerClass = 'SignController';
+	protected $signInCtrlClass = 'SignInController';
+
+	/**
+	 * Full class name to use for controller instance to submit sign in form.
+	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\ISignOutController`.
+	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignOutController`.
+	 * @var string
+	 */
+	protected $signOutCtrlClass = 'SignOutController';
 
 	/**
 	 * Full class name to use for sign in form instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Interfaces\ISignForm`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\SignInform`.
+	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm`.
+	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignInform`.
 	 * @var string
 	 */
 	protected $signInFormClass = 'SignInForm';
 
 	/**
 	 * Full class name to use for sign out form instance.
-	 * Class name has to implement interface `\MvcCore\Ext\Auth\Interfaces\ISignForm`.
-	 * Default value after init is configured to `\MvcCore\Ext\Auth\SignOutForm`.
+	 * Class name has to implement interface `\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm`.
+	 * Default value after init is configured to `\MvcCore\Ext\Auth\Basic\SignOutForm`.
 	 * @var string
 	 */
 	protected $signOutFormClass = 'SignOutForm';
@@ -165,7 +173,7 @@ trait Props
 
 	/**
 	 * User model instace or `NULL` if user has no username record in session namespace.
-	 * @var \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser
+	 * @var \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser
 	 */
 	protected $user = NULL;
 
@@ -173,13 +181,13 @@ trait Props
 	 * Sign in or sign out form instance.
 	 * If user is authenticated by username record in session namespace,
 	 * there is completed sign out form, if not authenticated, sign in form otherwise.
-	 * @var \MvcCore\Ext\Auth\Traits\SignForm|\MvcCore\Ext\Auth\Interfaces\ISignForm|\MvcCore\Ext\Auth\SignInForm|\MvcCore\Ext\Auth\SignOutForm
+	 * @var \MvcCore\Ext\Auth\Basic\Traits\AuthForm|\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm|\MvcCore\Ext\Auth\Basic\SignInForm|\MvcCore\Ext\Auth\Basic\SignOutForm
 	 */
 	protected $form = NULL;
 
 	/**
 	 * This is only internal semaphore to call
-	 * `\MvcCore\Ext\Auth\User::SetUpUserBySession()`
+	 * `\MvcCore\Ext\Auth\Basic\User::SetUpUserBySession()`
 	 * only once (if result is `NULL`) in request predispatch state.
 	 * `TRUE`if method `\MvcCore\Ext\Auth::GetInstance()->GetUser()`
 	 * has been called already with any result and also `TRUE` if

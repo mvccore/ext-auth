@@ -7,7 +7,7 @@ trait Setters
 	/***********************************************************************************
 	 *                            `\MvcCore\Ext\Auth` - Setters                        *
 	 ***********************************************************************************/
-	
+
 	/**
 	 * Set authorization expiration seconds, 10 minutes by default.
 	 * @param int $expirationSeconds
@@ -51,8 +51,20 @@ trait Setters
 	 * @param string $controllerClass
 	 * @return \MvcCore\Ext\Auth
 	 */
-	public function & SetControllerClass ($controllerClass = '') {
-		$this->controllerClass = $this->checkClassExistence($controllerClass);
+	public function & SetSignInCtrlClass ($signInCtrlClass = '') {
+		$this->signInCtrlClass = $this->checkClassExistence($signInCtrlClass);
+		return $this;
+	}
+
+	/**
+	 * Set authorization service controller class
+	 * to handle signin and signout actions,
+	 * it has to extend \MvcCore\Ext\Auth\Abstracts\Controller.
+	 * @param string $controllerClass
+	 * @return \MvcCore\Ext\Auth
+	 */
+	public function & SetSignOutCtrlClass ($signOutCtrlClass = '') {
+		$this->signOutCtrlClass = $this->checkClassExistence($signOutCtrlClass);
 		return $this;
 	}
 

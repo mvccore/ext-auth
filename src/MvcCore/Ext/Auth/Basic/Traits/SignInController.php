@@ -24,7 +24,7 @@ trait SignInController
 	public function SignInAction () {
 		/** @var $form \MvcCore\Ext\Auth\Basic\SignInForm */
 		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
-		list ($result, $data, $errors) = $form->Submit();
+		list ($result,) = $form->Submit();
 		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
 			// here you can count bad login requests
 			// to ban danger user for some time or anything else...

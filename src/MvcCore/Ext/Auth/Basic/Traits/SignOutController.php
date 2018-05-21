@@ -24,7 +24,7 @@ trait SignOutController
 	public function SignOutAction () {
 		/** @var $form \MvcCore\Ext\Auth\Basic\SignOutForm */
 		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetForm();
-		/*list ($result, $data, $errors) = */$form->Submit();
+		$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session
 		$form->RedirectAfterSubmit();
 	}

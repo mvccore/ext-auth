@@ -15,20 +15,20 @@ namespace MvcCore\Ext\Auth\Basic\Traits;
 
 trait SignOutForm
 {
-	/** @var \MvcCore\Ext\Auth\Traits\User|\MvcCore\Ext\Auth\Interfaces\IUser */
+	/** @var \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser */
 	protected $user = NULL;
 
 	/**
 	 * Initialize sign out button and user into
 	 * template for any custom template rendering.
-	 * @return \MvcCore\Ext\Auth\SignOutForm
+	 * @return \MvcCore\Ext\Auth\Basic\SignOutForm
 	 */
 	public function Init () {
 		parent::Init();
 
 		$this->initAuthFormPropsAndHiddenControls();
 
-		$this->AddField(new Form\SubmitButton(array(
+		$this->AddField(new \MvcCore\Ext\Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Log Out',
 			'cssClasses'	=> array('button'),
@@ -47,7 +47,7 @@ trait SignOutForm
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		if ($this->Result === Form::RESULT_SUCCESS) {
+		if ($this->Result === \MvcCore\Ext\Form::RESULT_SUCCESS) {
 			$userClass = $this->auth->GetUserClass();
 			$userClass::LogOut();
 		}

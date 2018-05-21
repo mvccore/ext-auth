@@ -14,8 +14,10 @@ trait Logic
 		if ($config) $this->SetConfiguration($config);
 		// initialize classes configuration
 		$baseClassName = '\\' . __CLASS__ . '\\';
-		if ($this->controllerClass && substr($this->controllerClass, 0, 1) != '\\')
-			$this->controllerClass = $baseClassName . $this->controllerClass;
+		if ($this->signInCtrlClass && substr($this->signInCtrlClass, 0, 1) != '\\')
+			$this->signInCtrlClass = $baseClassName . $this->signInCtrlClass;
+		if ($this->signOutCtrlClass && substr($this->signOutCtrlClass, 0, 1) != '\\')
+			$this->signOutCtrlClass = $baseClassName . $this->signOutCtrlClass;
 		if ($this->signInFormClass && substr($this->signInFormClass, 0, 1) != '\\')
 			$this->signInFormClass = $baseClassName . $this->signInFormClass;
 		if ($this->signOutFormClass && substr($this->signOutFormClass, 0, 1) != '\\')
@@ -95,11 +97,11 @@ trait Logic
 		$router = & $routerClass::GetInstance();
 		if ($this->IsAuthenticated()) {
 			$router->AddRoute(
-				$this->getInitializedRoute('SignOut'), TRUE
+				$this->getInitializedRoute($this->signOutCtrlClass, 'SignOut'), TRUE
 			);
 		} else {
 			$router->AddRoute(
-				$this->getInitializedRoute('SignIn'), TRUE
+				$this->getInitializedRoute($this->signInCtrlClass, 'SignIn'), TRUE
 			);
 		}
 	}
@@ -111,12 +113,12 @@ trait Logic
 		$successUrl = '';
 		if ($this->IsAuthenticated()) {
 			$this->form = new \MvcCore\Ext\Auth\Basic\SignOutForm($controller);
-			$route = $this->getInitializedRoute('SignOut');
+			$route = $this->getInitializedRoute($this->signOutCtrlClass, 'SignOut');
 			$successUrl = $this->signedOutUrl;
 			$cssClass = 'sign-out';
 		} else {
 			$this->form = new \MvcCore\Ext\Auth\Basic\SignInForm($controller);
-			$route = $this->getInitializedRoute('SignIn');
+			$route = $this->getInitializedRoute($this->signInCtrlClass, 'SignIn');
 			$successUrl = $this->signedInUrl;
 			$cssClass = 'sign-in';
 		}
@@ -143,14 +145,14 @@ trait Logic
 	 * @param string $actionName
 	 * @return \MvcCore\Route|\MvcCore\Interfaces\IRoute
 	 */
-	protected function getInitializedRoute ($actionName) {
+	protected function getInitializedRoute ($controllerName, $actionName) {
 		$routeName = lcfirst($actionName) . 'Route';
 		$rawRoute = & $this->$routeName;
 		if ($rawRoute instanceof \MvcCore\Interfaces\IRoute) {
 			return $rawRoute;
 		} else {
 			$routeClass = $this->application->GetRouteClass();
-			$routeInitData = array('controller' => $this->controllerClass, 'action' => $actionName);
+			$routeInitData = array('controller' => $controllerName, 'action' => $actionName);
 			$route = $routeClass::GetInstance(
 				gettype($rawRoute) == 'array'
 					? array_merge($routeInitData, $rawRoute)

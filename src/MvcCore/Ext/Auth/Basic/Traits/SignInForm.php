@@ -19,22 +19,22 @@ trait SignInForm
 	 * Initialize all form fields, initialize hidden field with
 	 * sourceUrl for cases when in request params is any source url param.
 	 * To return there after form is submitted.
-	 * @return \MvcCore\Ext\Auth\SignInForm
+	 * @return \MvcCore\Ext\Auth\Basic\SignInForm
 	 */
 	public function Init () {
 		parent::Init();
 
 		$this->initAuthFormPropsAndHiddenControls();
 
-		$this->AddField(new Form\Text(array(
+		$this->AddField(new \MvcCore\Ext\Form\Text(array(
 			'name'			=> 'username',
 			'placeholder'	=> 'User',
 		)));
-		$this->AddField(new Form\Password(array(
+		$this->AddField(new \MvcCore\Ext\Form\Password(array(
 			'name'			=> 'password',
 			'placeholder'	=> 'Password',
 		)));
-		$this->AddField(new Form\SubmitButton(array(
+		$this->AddField(new \MvcCore\Ext\Form\SubmitButton(array(
 			'name'			=> 'send',
 			'value'			=> 'Sign In',
 			'cssClasses'	=> array('button'),
@@ -44,7 +44,7 @@ trait SignInForm
 			->GetParam('sourceUrl', '.*', '', 'string');
 		$sourceUrl = filter_var(rawurldecode($sourceUrl), FILTER_VALIDATE_URL);
 
-		$this->AddField(new Form\Hidden(array(
+		$this->AddField(new \MvcCore\Ext\Form\Hidden(array(
 			'name'			=> 'sourceUrl',
 			'value'			=> rawurlencode($sourceUrl) ?: '',
 			'validators'	=> array('Url'),
@@ -62,7 +62,7 @@ trait SignInForm
 	 */
 	public function Submit ($rawParams = array()) {
 		parent::Submit();
-		if ($this->Result === Form::RESULT_SUCCESS) {
+		if ($this->Result === \MvcCore\Ext\Form::RESULT_SUCCESS) {
 			// now sended values are safe strings,
 			// try to get use by username and compare password hashes:
 			$userClass = $this->auth->GetUserClass();
@@ -77,7 +77,7 @@ trait SignInForm
 		$data = (object) $this->Data;
 		$this->SetSuccessUrl($data->sourceUrl ? $data->sourceUrl : $data->successUrl);
 		$this->SetErrorUrl($data->errorUrl);
-		if ($this->Result !== Form::RESULT_SUCCESS) sleep(3);
+		if ($this->Result !== \MvcCore\Ext\Form::RESULT_SUCCESS) sleep(3);
 		return array(
 			$this->Result,
 			$this->Data,
