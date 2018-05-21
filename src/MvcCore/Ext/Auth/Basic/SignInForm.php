@@ -18,8 +18,8 @@ use \MvcCore\Ext\Auth,
 
 class SignInForm
 	extends		\MvcCore\Ext\Form
-	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IAuthForm
+	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IForm
 {
-	use			\MvcCore\Ext\Auth\Basic\Traits\AuthForm;
+	use			\MvcCore\Ext\Auth\Basic\Traits\Form;
 	use			\MvcCore\Ext\Auth\Basic\Traits\SignInForm;
 }

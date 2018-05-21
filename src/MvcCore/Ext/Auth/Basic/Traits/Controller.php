@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
-trait AuthController
+trait Controller
 {
 	/**
 	 * Authentication form submit action to sign in.

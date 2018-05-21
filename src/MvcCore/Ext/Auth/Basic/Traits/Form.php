@@ -13,10 +13,10 @@
 
 namespace MvcCore\Ext\Auth\Basic\Traits;
 
-trait AuthForm
+trait Form
 {
 	/**
-	 * @var \MvcCore\Ext\Auth|\MvcCore\Ext\Interfaces\IAuth
+	 * @var \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	protected $auth = NULL;
 

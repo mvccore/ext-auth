@@ -3,7 +3,7 @@
 
 namespace MvcCore\Ext\Auth\Basic\Interfaces;
 
-interface IAuthForm
+interface IForm
 {
 	public function & SetId ($id = '');
 	public function & SetCssClass ($cssClass = '');

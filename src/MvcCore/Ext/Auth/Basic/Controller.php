@@ -13,9 +13,9 @@
 
 namespace MvcCore\Ext\Auth\Basic;
 
-class AuthController
+class Controller
 	extends		\MvcCore\Controller
 	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IAuthController
 {
-	use			\MvcCore\Ext\Auth\Basic\Traits\AuthController;
+	use			\MvcCore\Ext\Auth\Basic\Traits\Controller;
 }

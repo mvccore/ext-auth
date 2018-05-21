@@ -12,7 +12,7 @@ trait Getters
 	 * Return singleton instance. If instance exists, return existing instance,
 	 * if not, create new Auth module instance, store it and return it.
 	 * @param array $configuration Optional configuration passed into `__construct($configuration)` method.
-	 * @return \MvcCore\Ext\Auth
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
 	 */
 	public static function GetInstance ($configuration = array()) {
 		if (static::$instance === NULL)
