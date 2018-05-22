@@ -15,7 +15,7 @@ namespace MvcCore\Ext\Auth\Basics\Traits;
 
 /**
  * Trait for class `\MvcCore\Ext\Auth\Basics\SignOutForm`. Trait contains:
- * - Protected property user to display user full name in sign out form.
+ * - Protected property `$user` to display user full name in sign out form.
  * - `Init()` method to initialize all necessary sign in form fields.
  * - `Submit()` method to handle signin form submit request (`POST` by default).
  * - `Render()` method to render sign out form without template by default.
@@ -69,12 +69,12 @@ trait SignOutForm
 	 * @return string
 	 */
 	public function Render () {
-		$result = $this->SignOutForm->RenderBegin();
+		$result = $this->RenderBegin();
 		if ($this->user)
 			$result .= '<span>'.$this->user->GetFullName().'</span>';
 		foreach ($this->Fields as & $field)
 			$result .= $field->Render();
-		$result .= $this->SignOutForm->RenderEnd();
+		$result .= $this->RenderEnd();
 		return $result;
 	}
 }

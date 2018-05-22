@@ -62,8 +62,8 @@ class Database
 		$columns = (object) static::$usersTableStructure['columns'];
 		$sql = "
 			SELECT
-				u.$columns->id AS id,,
-				u.$columns->active AS active
+				u.$columns->id AS id,
+				u.$columns->active AS active,
 				u.$columns->userName AS userName,
 				u.$columns->passwordHash AS passwordHash,
 				u.$columns->fullName AS fullName
@@ -73,7 +73,11 @@ class Database
 				u.$columns->userName = :user_name AND
 				u.$columns->active = :active
 		";
-		$select = static::getDb()->prepare($sql);
+		$db = static::getDb();
+		if (!$select = $db->prepare($sql))
+			throw new \RuntimeException(
+				implode(' ', $db->errorInfo()) . ': ' . $sql, intval($db->errorCode())
+			);
 		$select->execute(array(
 			":user_name"	=> $userName,
 			":active"		=> 1,

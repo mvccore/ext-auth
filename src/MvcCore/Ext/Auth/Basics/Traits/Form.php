@@ -13,6 +13,11 @@
 
 namespace MvcCore\Ext\Auth\Basics\Traits;
 
+/**
+ * Trait for class `\MvcCore\Ext\Auth\Basics\SignInForm` and `\MvcCore\Ext\Auth\Basics\SignOutForm`. Trait contains:
+ * - Protected property `$auth` to use authentication module more flexible for fields init.
+ * - method `initAuthFormPropsAndHiddenControls()` always called from `Init()` method to init hidden fields for success url and error url.
+ */
 trait Form
 {
 	/**
