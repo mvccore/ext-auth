@@ -8,5 +8,6 @@ interface IRole
 	public function & SetId ($id);
 	public function GetName ();
 	public function & SetName ($userName);
-	public function GetByName ($name);
+	public function GetByName ($roleName);
+	public function GetPermission ($permitionName);
 }

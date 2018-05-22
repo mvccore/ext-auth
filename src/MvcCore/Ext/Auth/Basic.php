@@ -29,6 +29,6 @@ namespace MvcCore\Ext\Auth;
  */
 class Basic implements \MvcCore\Ext\Auth\Basics\Interfaces\IAuth
 {
-	use \MvcCore\Ext\Auth\Basics\Traits\Auth\PropsGettersSetters;
-	use \MvcCore\Ext\Auth\Basics\Traits\Auth\Handling;
+	use \MvcCore\Ext\Auth\Basics\Traits\Auth\PropsGettersSetters,
+		\MvcCore\Ext\Auth\Basics\Traits\Auth\Handling;
 }

@@ -14,23 +14,18 @@
 namespace MvcCore\Ext\Auth\Basics\Traits\Auth;
 
 /**
- * Responsibility - managing login/logout forms, authentication requests and user instance.
- * - Basic extensible authentication module with sign in and sign out forms
- *   and automaticly initialized user instance stored in custom session namespace.
- * - Possiblity to configure:
- *   - submit routes to sign in and sign out
- *   - submit success and submit error url addresses
- *   - form classes
- *   - forms submit's controller class
- *   - user instance class
- *   - wrong credentials timeout
- *   - custom password hash salt
- *   - translator and more...
+ * Trait for `\MvcCore\Ext\Auth\Basic` class. Trait contains:
+ * - All static properties.
+ * - All instance configurable properties except `protected $autoInit` property from `\MvcCore\Model`.
+ * - All instance non-configurable properties for internal use.
+ * - Getters for non-configurable and configurable instance properties.
+ * - Setters for configurable properties with interface implementation checking for class name properties.
+ * - Setters for non-configurable instance properties.
  */
 trait PropsGettersSetters
 {
 	/***********************************************************************************
-	 *                     `\MvcCore\Ext\Auth` - Static Properties                     *
+	 *                                Static Properties                                *
 	 ***********************************************************************************/
 
 	/**
@@ -59,7 +54,7 @@ trait PropsGettersSetters
 
 
 	/***********************************************************************************
-	 *                 `\MvcCore\Ext\Auth` - Configuration Properties                  *
+	 *                            Configuration Properties                             *
 	 ***********************************************************************************/
 
 	/**
@@ -84,6 +79,16 @@ trait PropsGettersSetters
 	 * @var string
 	 */
 	protected $userClass = 'User';
+
+	/**
+	 * Full class name to use for user role class.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basics\Role`.
+	 * @var string
+	 */
+	protected $roleClass = 'Role';
 
 	/**
 	 * Full class name to use for controller instance
@@ -198,9 +203,16 @@ trait PropsGettersSetters
 	 */
 	protected $translator = NULL;
 
+	/**
+	 * Pre-route and pre-dispatch application callable handlers priority index.
+	 * This property has no setter and getter. It's possible to configure only throw constructor.
+	 * @var int
+	 */
+	protected $preHandlersPriority = 100;
+
 
 	/***********************************************************************************
-	 *                      `\MvcCore\Ext\Auth` - Internal Properties                  *
+	 *                               Internal Properties                               *
 	 ***********************************************************************************/
 
 	/**
@@ -252,7 +264,7 @@ trait PropsGettersSetters
 
 
 	/***********************************************************************************
-	 *                            `\MvcCore\Ext\Auth` - Getters                        *
+	 *                                     Getters                                     *
 	 ***********************************************************************************/
 
 	/**
@@ -280,6 +292,18 @@ trait PropsGettersSetters
 	 */
 	public function GetUserClass () {
 		return $this->userClass;
+	}
+
+	/**
+	 * Get full class name to use for user role class.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basics\Role`.
+	 * @return string
+	 */
+	public function GetRoleClass () {
+		return $this->roleClass;
 	}
 
 	/**
@@ -517,7 +541,7 @@ trait PropsGettersSetters
 
 
 	/***********************************************************************************
-	 *                            `\MvcCore\Ext\Auth` - Setters                        *
+	 *                                     Setters                                     *
 	 ***********************************************************************************/
 
 	/**
@@ -549,6 +573,22 @@ trait PropsGettersSetters
 	public function & SetUserClass ($userClass = '') {
 		$this->userClass = $this->checkClassImplementation(
 			$userClass, \MvcCore\Ext\Auth\Basics\Interfaces\IUser::class, TRUE
+		);
+		return $this;
+	}
+
+	/**
+	 * Set full class name to use for user role class.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basics\Role`.
+	 * @param string $roleClass Role full class name implementing `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basics\Interfaces\IAuth
+	 */
+	public function & SetRoleClass ($roleClass = '') {
+		$this->userClass = $this->checkClassImplementation(
+			$roleClass, \MvcCore\Ext\Auth\Basics\Interfaces\IRole::class, TRUE
 		);
 		return $this;
 	}

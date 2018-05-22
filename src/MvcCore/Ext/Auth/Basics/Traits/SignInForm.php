@@ -13,6 +13,11 @@
 
 namespace MvcCore\Ext\Auth\Basics\Traits;
 
+/**
+ * Trait for class `\MvcCore\Ext\Auth\Basics\SignInForm`. Trait contains:
+ * - `Init()` method to initialize all necessary sign in form fields.
+ * - `Submit()` method to handle signin form submit request (`POST` by default).
+ */
 trait SignInForm
 {
 	/**
@@ -29,10 +34,12 @@ trait SignInForm
 		$this->AddField(new \MvcCore\Ext\Form\Text(array(
 			'name'			=> 'username',
 			'placeholder'	=> 'User',
+			'validators'	=> array('SafeString'),
 		)));
 		$this->AddField(new \MvcCore\Ext\Form\Password(array(
 			'name'			=> 'password',
 			'placeholder'	=> 'Password',
+			'validators'	=> array('SafeString'),
 		)));
 		$this->AddField(new \MvcCore\Ext\Form\SubmitButton(array(
 			'name'			=> 'send',

@@ -13,13 +13,13 @@
 
 namespace MvcCore\Ext\Auth\Basics;
 
-use \MvcCore\Ext\Auth,
-	\MvcCore\Ext\Form;
-
+/**
+ * Responsibility - initialize necessary sign out form fields and handle sign out form submit.
+ */
 class SignOutForm
 	extends		\MvcCore\Ext\Form
 	implements	\MvcCore\Ext\Auth\Basics\Interfaces\IForm
 {
-	use			\MvcCore\Ext\Auth\Basics\Traits\Form;
-	use			\MvcCore\Ext\Auth\Basics\Traits\SignOutForm;
+	use			\MvcCore\Ext\Auth\Basics\Traits\Form,
+				\MvcCore\Ext\Auth\Basics\Traits\SignOutForm;
 }

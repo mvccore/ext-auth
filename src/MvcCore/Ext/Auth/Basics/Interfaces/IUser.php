@@ -34,6 +34,9 @@ interface IUser
 
 	public function & SetPasswordHash ($passwordHash);
 
+
+
+
 	public function & GetRoles ();
 
 	public function & SetRoles ($roles = array());
@@ -42,7 +45,9 @@ interface IUser
 
 	public function & RemoveRole ($role);
 
-		/**
+
+
+	/**
 	 * Try to get user model instance from
 	 * any place by session username record
 	 * if there is any or return null.

@@ -44,6 +44,16 @@ interface IAuth
 	public function GetUserClass ();
 
 	/**
+	 * Get full class name to use for user role class.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basics\Role`.
+	 * @return string
+	 */
+	public function GetRoleClass ();
+
+	/**
 	 * Get full class name to use for controller instance
 	 * to submit auth form(s). Class name has to implement interfaces:
 	 * - `\MvcCore\Ext\Auth\Basics\Interfaces\IController`
@@ -221,6 +231,17 @@ interface IAuth
 	 * @return \MvcCore\Ext\Auth\Basics\Interfaces\IAuth
 	 */
 	public function & SetUserClass ($userClass = '');
+
+	/**
+	 * Set full class name to use for user role class.
+	 * Class name has to implement interface
+	 * `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * Default value after auth module init is
+	 * configured to `\MvcCore\Ext\Auth\Basics\Role`.
+	 * @param string $roleClass Role full class name implementing `\MvcCore\Ext\Auth\Basics\Interfaces\IRole`.
+	 * @return \MvcCore\Ext\Auth\Basics\Interfaces\IAuth
+	 */
+	public function & SetRoleClass ($roleClass = '');
 
 	/**
 	 * Set full class name to use for controller instance

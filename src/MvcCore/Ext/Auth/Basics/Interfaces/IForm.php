@@ -19,4 +19,5 @@ interface IForm
 	public function Submit ($rawParams = array());
 	public function ClearSession ();
 	public function RedirectAfterSubmit ();
+	public function Render ();
 }

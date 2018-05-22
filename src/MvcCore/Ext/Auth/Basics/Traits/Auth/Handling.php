@@ -14,18 +14,12 @@
 namespace MvcCore\Ext\Auth\Basics\Traits\Auth;
 
 /**
- * Responsibility - managing login/logout forms, authentication requests and user instance.
- * - Basic extensible authentication module with sign in and sign out forms
- *   and automaticly initialized user instance stored in custom session namespace.
- * - Possiblity to configure:
- *   - submit routes to sign in and sign out
- *   - submit success and submit error url addresses
- *   - form classes
- *   - forms submit's controller class
- *   - user instance class
- *   - wrong credentials timeout
- *   - custom password hash salt
- *   - translator and more...
+ * Trait for `\MvcCore\Ext\Auth\Basic` class. Trait contains:
+ * - Static `GetInstance()` method to return singleton instance.
+ * - Constructor to init default config props and to assign pre-route and pre-dispatch application handlers.
+ * - Protected methods to handle:
+ *   - Pre-route handler - to init signin/signout form url addresses and routes if necessary.
+ *   - Pre-dispatch handler - to assign user instance to prepared controller to dispatch if possible.
  */
 trait Handling
 {
@@ -53,7 +47,7 @@ trait Handling
 		// set up possible configuration
 		if ($config) $this->SetConfiguration($config);
 		// initialize classes configuration
-		$baseClassName = '\\' . __CLASS__ . '\\';
+		$baseClassName = '\\' . __CLASS__ . 's\\';
 		if ($this->controllerClass && substr($this->controllerClass, 0, 1) != '\\')
 			$this->controllerClass = $baseClassName . $this->controllerClass;
 		if ($this->signInFormClass && substr($this->signInFormClass, 0, 1) != '\\')
@@ -62,6 +56,8 @@ trait Handling
 			$this->signOutFormClass = $baseClassName . $this->signOutFormClass;
 		if ($this->userClass && substr($this->userClass, 0, 1) != '\\')
 			$this->userClass = $baseClassName . $this->userClass;
+		if ($this->roleClass && substr($this->roleClass, 0, 1) != '\\')
+			$this->roleClass = $baseClassName . $this->roleClass;
 		// set up application reference
 		$this->application = & \MvcCore\Application::GetInstance();
 		// set up tools class
@@ -70,11 +66,11 @@ trait Handling
 			// add sing in or sing out forms routes, complete form success and error addresses
 			->AddPreRouteHandler(function () {
 				$this->preRouteHandler();
-			}, 100)
+			}, $this->preHandlersPriority)
 			// try to set up user instance into dispatched controller instance if user is not null
 			->AddPreDispatchHandler(function () {
 				$this->preDispatchHandler();
-			}, 100);
+			}, $this->preHandlersPriority);
 	}
 
 	/**
@@ -155,7 +151,7 @@ trait Handling
 		} else {
 			$routeClass = $this->application->GetRouteClass();
 			$routeInitData = array('controller' => $this->controllerClass, 'action' => $actionName);
-			$route = $routeClass::GetInstance(
+			$route = $routeClass::CreateInstance(
 				gettype($rawRoute) == 'array'
 					? array_merge($routeInitData, $rawRoute)
 					: array_merge(array('pattern' => $rawRoute), $routeInitData)
