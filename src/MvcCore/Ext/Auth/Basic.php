@@ -27,10 +27,8 @@ namespace MvcCore\Ext\Auth;
  *   - custom password hash salt
  *   - translator and more...
  */
-class Basic implements \MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+class Basic implements \MvcCore\Ext\Auth\Basics\Interfaces\IAuth
 {
-	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Props;
-	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Getters;
-	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Setters;
-	use \MvcCore\Ext\Auth\Basic\Traits\Auth\Handling;
+	use \MvcCore\Ext\Auth\Basics\Traits\Auth\PropsGettersSetters;
+	use \MvcCore\Ext\Auth\Basics\Traits\Auth\Handling;
 }

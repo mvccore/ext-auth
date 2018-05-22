@@ -1,6 +1,6 @@
 <?php
 
-namespace MvcCore\Ext\Auth\Basic\Interfaces;
+namespace MvcCore\Ext\Auth\Basics\Interfaces;
 
 /**
  * Responsibility - handle configured signin form and signout form submit requests.

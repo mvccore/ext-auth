@@ -11,17 +11,17 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic\Traits;
+namespace MvcCore\Ext\Auth\Basics\Traits;
 
 trait SignOutForm
 {
-	/** @var \MvcCore\Ext\Auth\Basic\User|\MvcCore\Ext\Auth\Basic\Interfaces\IUser */
+	/** @var \MvcCore\Ext\Auth\Basics\User|\MvcCore\Ext\Auth\Basics\Interfaces\IUser */
 	protected $user = NULL;
 
 	/**
 	 * Initialize sign out button and user into
 	 * template for any custom template rendering.
-	 * @return \MvcCore\Ext\Auth\Basic\SignOutForm
+	 * @return \MvcCore\Ext\Auth\Basics\SignOutForm
 	 */
 	public function Init () {
 		parent::Init();

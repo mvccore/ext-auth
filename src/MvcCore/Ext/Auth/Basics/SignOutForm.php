@@ -11,15 +11,15 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic;
+namespace MvcCore\Ext\Auth\Basics;
 
 use \MvcCore\Ext\Auth,
 	\MvcCore\Ext\Form;
 
-class SignInForm
+class SignOutForm
 	extends		\MvcCore\Ext\Form
-	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IForm
+	implements	\MvcCore\Ext\Auth\Basics\Interfaces\IForm
 {
-	use			\MvcCore\Ext\Auth\Basic\Traits\Form;
-	use			\MvcCore\Ext\Auth\Basic\Traits\SignInForm;
+	use			\MvcCore\Ext\Auth\Basics\Traits\Form;
+	use			\MvcCore\Ext\Auth\Basics\Traits\SignOutForm;
 }

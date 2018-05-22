@@ -1,7 +1,32 @@
 <?php
 
-namespace MvcCore\Ext\Auth\Basic\Traits\Auth;
+/**
+ * MvcCore
+ *
+ * This source file is subject to the BSD 3 License
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that are distributed with this source code.
+ *
+ * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ */
 
+namespace MvcCore\Ext\Auth\Basics\Traits\Auth;
+
+/**
+ * Responsibility - managing login/logout forms, authentication requests and user instance.
+ * - Basic extensible authentication module with sign in and sign out forms
+ *   and automaticly initialized user instance stored in custom session namespace.
+ * - Possiblity to configure:
+ *   - submit routes to sign in and sign out
+ *   - submit success and submit error url addresses
+ *   - form classes
+ *   - forms submit's controller class
+ *   - user instance class
+ *   - wrong credentials timeout
+ *   - custom password hash salt
+ *   - translator and more...
+ */
 trait Handling
 {
 	/**
@@ -9,7 +34,7 @@ trait Handling
 	 * if not, create new basic authentication module instance, store it and return it.
 	 * @param array $configuration Optional configuration passed into method
 	 *                             `\MvcCore\Ext\Auth\Basic::__construct($configuration)`.
-	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+	 * @return \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basics\Interfaces\IAuth
 	 */
 	public static function GetInstance ($configuration = array()) {
 		if (static::$instance === NULL)

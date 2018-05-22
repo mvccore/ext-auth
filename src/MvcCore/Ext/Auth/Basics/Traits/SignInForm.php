@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic\Traits;
+namespace MvcCore\Ext\Auth\Basics\Traits;
 
 trait SignInForm
 {
@@ -19,7 +19,7 @@ trait SignInForm
 	 * Initialize all form fields, initialize hidden field with
 	 * sourceUrl for cases when in request params is any source url param.
 	 * To return there after form is submitted.
-	 * @return \MvcCore\Ext\Auth\Basic\SignInForm
+	 * @return \MvcCore\Ext\Auth\Basics\SignInForm
 	 */
 	public function Init () {
 		parent::Init();

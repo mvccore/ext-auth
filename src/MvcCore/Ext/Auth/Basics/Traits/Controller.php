@@ -11,7 +11,7 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic\Traits;
+namespace MvcCore\Ext\Auth\Basics\Traits;
 
 /**
  * Responsibility - handle configured signin form and signout form submit requests.
@@ -25,7 +25,7 @@ trait Controller
 	 * @return void
 	 */
 	public function SignInAction () {
-		/** @var $form \MvcCore\Ext\Auth\Basic\SignInForm */
+		/** @var $form \MvcCore\Ext\Auth\Basics\SignInForm */
 		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetSignInForm();
 		list ($result,) = $form->Submit();
 		if ($result !== \MvcCore\Ext\Form::RESULT_SUCCESS) {
@@ -44,7 +44,7 @@ trait Controller
 	 * @return void
 	 */
 	public function SignOutAction () {
-		/** @var $form \MvcCore\Ext\Auth\Basic\SignOutForm */
+		/** @var $form \MvcCore\Ext\Auth\Basics\SignOutForm */
 		$form = \MvcCore\Ext\Auth\Basic::GetInstance()->GetSignOutForm();
 		$form->Submit();
 		$form->ClearSession(); // to remove all submited data from session

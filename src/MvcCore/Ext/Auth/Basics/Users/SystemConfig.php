@@ -2,7 +2,7 @@
 
 namespace MvcCore\Ext\Auth\Users;
 
-class SystemConfig extends \MvcCore\Ext\Auth\Basic\User
+class SystemConfig extends \MvcCore\Ext\Auth\Basics\User
 {
 	public static function GetByUserName ($userName) {
 		$result = NULL;

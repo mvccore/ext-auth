@@ -11,15 +11,15 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic;
+namespace MvcCore\Ext\Auth\Basics;
 
-use \MvcCore\Ext\Auth,
-	\MvcCore\Ext\Form;
-
-class SignOutForm
-	extends		\MvcCore\Ext\Form
-	implements	\MvcCore\Ext\Auth\Basic\Interfaces\IForm
+/**
+ * Responsibility - handle configured signin form and signout form submit requests.
+ */
+class Controller
+	extends		\MvcCore\Controller
+	implements	\MvcCore\Ext\Auth\Basics\Interfaces\IController,
+				\MvcCore\Interfaces\IController
 {
-	use			\MvcCore\Ext\Auth\Basic\Traits\Form;
-	use			\MvcCore\Ext\Auth\Basic\Traits\SignOutForm;
+	use			\MvcCore\Ext\Auth\Basics\Traits\Controller;
 }

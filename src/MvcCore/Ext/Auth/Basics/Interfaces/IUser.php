@@ -11,10 +11,13 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic\Interfaces;
+namespace MvcCore\Ext\Auth\Basics\Interfaces;
 
 interface IUser
 {
+	const SESSION_USERNAME_KEY = 'userName';
+	const SESSION_AUTHENTICATED_KEY = 'authenticated';
+
 	public function GetId ();
 
 	public function & SetId ($id);

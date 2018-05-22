@@ -1,13 +1,19 @@
 <?php
 
-namespace MvcCore\Ext\Auth\Basic\Traits\User;
+namespace MvcCore\Ext\Auth\Basics\Traits\User;
 
 trait Auth
 {
 	public static function SetUpUserBySession () {
-		$userSessionNamespace = static::getUserSessionNamespace();
-		if (isset($userSessionNamespace->userName)) {
-			return static::GetByUserName($userSessionNamespace->userName);
+		$userSessionNamespace = static::GetUserSessionNamespace();
+		$sessionUserNameKey = \MvcCore\Ext\Auth\Basics\Interfaces\IUser::SESSION_USERNAME_KEY;
+		$sessionAuthenticatedKey = \MvcCore\Ext\Auth\Basics\Interfaces\IUser::SESSION_AUTHENTICATED_KEY;
+		if (
+			isset($userSessionNamespace->$sessionUserNameKey) &&
+			isset($userSessionNamespace->$sessionAuthenticatedKey) &&
+			$userSessionNamespace->$sessionAuthenticatedKey
+		) {
+			return static::GetByUserName($userSessionNamespace->$sessionUserNameKey);
 		}
 		return NULL;
 	}
@@ -16,7 +22,9 @@ trait Auth
 		$hashedPassword = static::EncodePasswordToHash($password);
 		$user = static::GetByUserName($userName);
 		if ($user && $user->passwordHash === $hashedPassword) {
-			static::getUserSessionNamespace()->userName = $user->userName;
+			$userSessionNamespace = & static::GetUserSessionNamespace();
+			$userSessionNamespace->{\MvcCore\Ext\Auth\Basics\Interfaces\IUser::SESSION_USERNAME_KEY} = $user->userName;
+			$userSessionNamespace->{\MvcCore\Ext\Auth\Basics\Interfaces\IUser::SESSION_AUTHENTICATED_KEY} = TRUE;
 			return $user;
 		}
 		return NULL;
@@ -26,8 +34,13 @@ trait Auth
 	 * Destroy user credentials in session storrage.
 	 * @return void
 	 */
-	public static function LogOut () {
-		static::getUserSessionNamespace()->Destroy();
+	public static function LogOut ($destroyWholeSession = FALSE) {
+		$userSessionNamespace = & static::GetUserSessionNamespace();
+		if ($destroyWholeSession) {
+			static::GetUserSessionNamespace()->Destroy();
+		} else {
+			$userSessionNamespace->{\MvcCore\Ext\Auth\Basics\Interfaces\IUser::SESSION_AUTHENTICATED_KEY} = FALSE;
+		}
 	}
 
 	/**
@@ -56,23 +69,5 @@ trait Auth
 			'['.__CLASS__.'] Hash computed by `password_hash()` is invalid.'
 		);
 		return $result;
-	}
-
-	/**
-	 * Get session to get/set/clear username,
-	 * if session is not started - start the session.
-	 * @return \MvcCore\Session
-	 */
-	protected static function & getUserSessionNamespace () {
-		if (static::$userSessionNamespace === NULL) {
-			$app = \MvcCore\Application::GetInstance();
-			$app->SessionStart(); // start session if not started or do nothing if session has been started already
-			$sessionClass = $app->GetSessionClass();
-			static::$userSessionNamespace = $sessionClass::GetNamespace(\MvcCore\Ext\Auth::class);
-			static::$userSessionNamespace->SetExpirationSeconds(
-				\MvcCore\Ext\Auth\Basic::GetInstance()->GetExpirationSeconds()
-			);
-		}
-		return static::$userSessionNamespace;
 	}
 }

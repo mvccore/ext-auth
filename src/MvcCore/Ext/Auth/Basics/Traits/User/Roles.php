@@ -1,6 +1,6 @@
 <?php
 
-namespace MvcCore\Ext\Auth\Basic\Traits\User;
+namespace MvcCore\Ext\Auth\Basics\Traits\User;
 
 trait Roles
 {

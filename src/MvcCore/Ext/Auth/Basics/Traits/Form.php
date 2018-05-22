@@ -11,12 +11,12 @@
  * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
  */
 
-namespace MvcCore\Ext\Auth\Basic\Traits;
+namespace MvcCore\Ext\Auth\Basics\Traits;
 
 trait Form
 {
 	/**
-	 * @var \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basic\Interfaces\IAuth
+	 * @var \MvcCore\Ext\Auth\Basic|\MvcCore\Ext\Auth\Basics\Interfaces\IAuth
 	 */
 	protected $auth = NULL;
 
