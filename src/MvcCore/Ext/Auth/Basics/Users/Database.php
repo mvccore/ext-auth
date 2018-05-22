@@ -82,10 +82,12 @@ class Database
 			":user_name"	=> $userName,
 			":active"		=> 1,
 		));
-		if ($data = $select->fetch(\PDO::FETCH_ASSOC)) {
-			$user = (new static())->SetUp($data, FALSE, TRUE, FALSE);
+		$user = NULL;
+		$data = $select->fetch(\PDO::FETCH_ASSOC);
+		if ($data) {
+			$user = (new static())->SetUp($data, TRUE, TRUE, FALSE);
 			return $user;
 		}
-		return NULL;
+		return $user;
 	}
 }

@@ -63,6 +63,7 @@ trait Base
 	 */
 	public function & SetUserName ($userName) {
 		$this->userName = $userName;
+		return $this;
 	}
 
 	/**
@@ -84,6 +85,7 @@ trait Base
 	 */
 	public function & SetFullName ($fullName) {
 		$this->fullName = $fullName;
+		return $this;
 	}
 
 	/**
