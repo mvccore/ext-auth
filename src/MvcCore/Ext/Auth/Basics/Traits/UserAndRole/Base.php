@@ -60,7 +60,7 @@ trait Base
 	 * This function is only alias for `$user->GetActive();`.
 	 * @return bool
 	 */
-	public function IsActive(){
+	public function IsActive () {
 		return $this->active;
 	}
 
@@ -80,5 +80,4 @@ trait Base
 		$this->active = (bool) $active;
 		return $this;
 	}
-
 }

@@ -5,7 +5,8 @@ namespace MvcCore\Ext\Auth\Basics\Interfaces;
 
 interface IForm
 {
-	const ID = 'authentication';
+	const HTML_ID_SIGNIN = 'authentication_signin';
+	const HTML_ID_SIGNOUT = 'authentication_signout';
 
 	public function & SetId ($id = '');
 	public function & SetCssClass ($cssClass = '');
