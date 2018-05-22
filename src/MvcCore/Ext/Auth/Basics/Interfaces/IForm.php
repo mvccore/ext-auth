@@ -108,7 +108,7 @@ interface IForm
 	 * @throws \MvcCore\Ext\Form\Interfaces\IException
 	 * @return \MvcCore\Ext\Form\Interfaces\IForm
 	 */
-	public function & Init ();
+	public function Init ();
 
 	/**
 	 * Add configured form field instance.
@@ -145,7 +145,7 @@ interface IForm
 	 * Data sended from last submit, any csrf tokens and any errors.
 	 * @return \MvcCore\Ext\Form\Interfaces\IForm
 	 */
-	public function ClearSession ();
+	public function & ClearSession ();
 
 	/**
 	 * Call this function in custom `\MvcCore\Ext\Form::Submit();` method implementation
