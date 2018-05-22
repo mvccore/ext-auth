@@ -76,10 +76,14 @@ trait SignInForm
 			$user = $userClass::LogIn(
 				$this->Data['username'], $this->Data['password']
 			);
-			if ($user === NULL) $this->AddError(
-				'User name or password is incorrect.',
-				array('username', 'password')
-			);
+			if ($user !== NULL) {
+				$user->SetPasswordHash(NULL);
+			} else {
+				$this->AddError(
+					'User name or password is incorrect.',
+					array('username', 'password')
+				);
+			}
 		}
 		$data = (object) $this->Data;
 		$this->SetSuccessUrl($data->sourceUrl ? $data->sourceUrl : $data->successUrl);
