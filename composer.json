@@ -1,7 +1,7 @@
 {
 	"name": "mvccore/ext-auth",
 	"type": "library",
-	"description": "MvcCore Extension - Auth - simple authentication service, only to signin/signout an user. Service use  credentials defined in system config.ini by default. Service is very easy to extend and configure for new user model class to authenticate the user by any database credentials or anything else and the same is possible for sign in/out controller or form class to use any registration implementation you need.",
+	"description": "MvcCore Extension - Auth - authentication module with automatic authentication module type detection by loaded classes.",
 	"keywords": [
 		"mvc", 
 		"mvccore", 
@@ -32,7 +32,7 @@
 	"require": {
 		"php": ">=5.3.0",
 		"mvccore/mvccore": "^4.3.1",
-		"mvccore/ext-form": "^4.3.1"
+		"mvccore/ext-auth-basic": "^4.3.1"
 	},
 	"autoload": {
 		"classmap": ["src/"]
