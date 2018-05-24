@@ -34,7 +34,7 @@ To get sign in form into view in your application controller:
 			self::Redirect($this->Url('administration_index_page'));
 		$this->view->SignInForm = \MvcCore\Ext\Auth::GetInstance()
 			->GetSignInForm()
-			->SetDefaults(array(// set signed in url to administration index page by default:
+			->SetValues(array(// set signed in url to administration index page by default:
 				'successUrl' => $this->Url('administration_index_page'),
 			));
 	}
@@ -48,7 +48,7 @@ To get sign out form into view in your application controller:
 		if ($this->viewEnabled && $this->user) {
 			$this->view->SignOutForm =\MvcCore\Ext\Auth::GetInstance()
 				->GetSignOutForm()
-				->SetDefaults(array(
+				->SetValues(array(
 					'successUrl' => $this->Url('login_page')
 				));
 		}

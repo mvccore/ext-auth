@@ -42,7 +42,7 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	 * - `\MvcCore\Ext\Auths\Basic`	- always loaded
 	 * @param array $configuration Optional configuration passed into method
 	 *                             `\MvcCore\Ext\Auths\Basic::__construct($configuration)`.
-	 * @return \MvcCore\Ext\Auths\Full|\MvcCore\Ext\Auths\Basic|\MvcCore\Ext\Auths\Basics\Interfaces\IAuth
+	 * @return \MvcCore\Ext\Auths\Full|\MvcCore\Ext\Auths\Basic|\MvcCore\Ext\Auths\Basics\IAuth
 	 */
 	public static function & GetInstance ($configuration = array()) {
 		if (self::$instance === NULL) {
