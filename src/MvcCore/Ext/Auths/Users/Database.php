@@ -13,8 +13,8 @@
 
 namespace MvcCore\Ext\Auths\Users;
 
-if (\MvcCore\Ext\Auth::GetAuthType() == \MvcCore\Ext\Auth::TYPE_FULL) {
-	class Database extends \MvcCore\Ext\Auths\Fulls\Users\Database{}
-} else {
+if (\MvcCore\Ext\Auth::GetAuthType() == \MvcCore\Ext\Auth::TYPE_BASIC) {
 	class Database extends \MvcCore\Ext\Auths\Basics\Users\Database{}
+} else {
+	class Database extends \MvcCore\Ext\Auths\Fulls\Users\Database{}
 }

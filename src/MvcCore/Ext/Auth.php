@@ -46,10 +46,10 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	 */
 	public static function & GetInstance ($configuration = []) {
 		if (self::$instance === NULL) {
-			if (self::GetAuthType() == self::TYPE_FULL) {
-				self::$instance = new \MvcCore\Ext\Auths\Full($configuration);
-			} else {
+			if (self::GetAuthType() == self::TYPE_BASIC) {
 				self::$instance = new \MvcCore\Ext\Auths\Basic($configuration);
+			} else {
+				self::$instance = new \MvcCore\Ext\Auths\Full($configuration);
 			}
 		}
 		return self::$instance;
