@@ -1,7 +1,7 @@
 {
 	"name": "mvccore/ext-auth",
 	"type": "library",
-	"description": "MvcCore Extension - Auth - authentication module with automatic authentication module type detection by loaded classes.",
+	"description": "MvcCore - Extension - Auth - authentication module with automatic authentication module type detection by loaded classes.",
 	"keywords": [
 		"mvc", 
 		"mvccore", 
