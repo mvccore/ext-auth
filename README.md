@@ -16,7 +16,7 @@ Add this to `Bootstrap.php` or to very application beginning, before application
 ```php
 \MvcCore\Ext\Auth::GetInstance()
 	->SetPasswordHashSalt('s9E56/QH6!a69sJML9aS$6s+')
-	->SetUserClass(\MvcCore\Ext\Auths\Users\SystemConfig::class);
+	->SetUserClass('\\MvcCore\\Ext\\Auths\\Users\\SystemConfig');
 ```
 For system config users, you need to specify users in `system.ini` like this:
 ```ini
