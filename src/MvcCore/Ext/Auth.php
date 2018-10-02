@@ -21,18 +21,49 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	/**
 	 * Full authentication module type with all features.
 	 */
-	const TYPE_FULL = 'full';
+	const AUTH_CLASS_FULL = '\MvcCore\Ext\Auths\Full';
 
 	/**
 	 * Basic authentication module type with signin/signout form, system config user or database user only.
 	 */
-	const TYPE_BASIC = 'basic';
+	const AUTH_CLASS_BASIC = '\MvcCore\Ext\Auths\Basic';
 
 	/**
 	 * Authentication module type. Possible values: `NULL | "full" | "basic"`.
-	 * @var string
+	 * @var string|NULL
 	 */
 	protected static $authType = NULL;
+
+	/**
+	 * Detected or configurated authentication class name.
+	 * @var string|NULL
+	 */
+	protected static $authClass = NULL;
+
+	/**
+	 * Return authentication module full class name.
+	 * @return string|NULL
+	 */
+	public static function GetAuthClass () {
+		if (self::$authClass === NULL) {
+			if (class_exists(self::AUTH_CLASS_FULL)) {
+				self::$authClass = self::AUTH_CLASS_FULL;
+			} else {
+				self::$authClass = self::AUTH_CLASS_BASIC;
+			}
+		}
+		return self::$authClass;
+	}
+
+	/**
+	 * Set authentication module full class name implementing `\MvcCore\Ext\Auths\Basics\IAuth`.
+	 * @return string|NULL
+	 */
+	public static function SetAuthClass ($authClass) {
+		$toolClass = \MvcCore\Application::GetInstance()->GetToolClass();
+		if ($toolClass::CheckClassInterface($authClass, 'MvcCore\Ext\Auths\Basics\IAuth', TRUE, TRUE)) 
+			self::$authClass = $authClass;
+	}
 
 	/**
 	 * Return singleton instance. If instance exists, return existing instance,
@@ -46,29 +77,9 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	 */
 	public static function & GetInstance ($configuration = []) {
 		if (self::$instance === NULL) {
-			if (self::GetAuthType() == self::TYPE_BASIC) {
-				self::$instance = new \MvcCore\Ext\Auths\Basic($configuration);
-			} else {
-				self::$instance = new \MvcCore\Ext\Auths\Full($configuration);
-			}
+			$authClass = self::GetAuthClass();
+			self::$instance = & $authClass::GetInstance($configuration);
 		}
 		return self::$instance;
-	}
-
-	/**
-	 * Return authentication module type by existing classes.
-	 * Return `"full"` if class `\MvcCore\Ext\Auths\Full` exists
-	 * or return `"basic"` if doesn't.
-	 * @return string
-	 */
-	public static function GetAuthType () {
-		if (self::$authType === NULL) {
-			if (class_exists('\\MvcCore\\Ext\\Auths\\Full')) {
-				self::$authType = self::TYPE_FULL;
-			} else {
-				self::$authType = self::TYPE_BASIC;
-			}
-		}
-		return self::$authType;
 	}
 }
