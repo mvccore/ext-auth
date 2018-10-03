@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auths\Users;
 
-if (\MvcCore\Ext\Auth::GetAuthType() == \MvcCore\Ext\Auth::TYPE_BASIC) {
+if (\MvcCore\Ext\Auth::GetAuthClass() == \MvcCore\Ext\Auth::AUTH_CLASS_BASIC) {
 	class SystemConfig extends \MvcCore\Ext\Auths\Basics\Users\SystemConfig{}
 } else {
 	class SystemConfig extends \MvcCore\Ext\Auths\Fulls\Users\SystemConfig{}

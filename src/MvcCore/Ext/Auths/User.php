@@ -13,7 +13,7 @@
 
 namespace MvcCore\Ext\Auths;
 
-if (\MvcCore\Ext\Auth::GetAuthType() == \MvcCore\Ext\Auth::TYPE_BASIC) {
+if (\MvcCore\Ext\Auth::GetAuthClass() == \MvcCore\Ext\Auth::AUTH_CLASS_BASIC) {
 	class User extends \MvcCore\Ext\Auths\Basics\User{}
 } else {
 	class User extends \MvcCore\Ext\Auths\Fulls\User{}
