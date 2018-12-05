@@ -35,7 +35,7 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	protected static $authType = NULL;
 
 	/**
-	 * Detected or configurated authentication class name.
+	 * Detected or configured authentication class name.
 	 * @var string|NULL
 	 */
 	protected static $authClass = NULL;
