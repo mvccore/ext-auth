@@ -19,6 +19,13 @@ namespace MvcCore\Ext;
 class Auth extends \MvcCore\Ext\Auths\Basic
 {
 	/**
+	 * MvcCore Extension - Auth - version:
+	 * Comparison by PHP function version_compare();
+	 * @see http://php.net/manual/en/function.version-compare.php
+	 */
+	const VERSION = '5.0.0-alpha';
+
+	/**
 	 * Full authentication module type with all features.
 	 */
 	const AUTH_CLASS_FULL = '\MvcCore\Ext\Auths\Full';
