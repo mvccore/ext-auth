@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view
  * the LICENSE.md file that are distributed with this source code.
  *
- * @copyright	Copyright (c) 2016 Tom Flídr (https://github.com/mvccore/mvccore)
- * @license		https://mvccore.github.io/docs/mvccore/4.0.0/LICENCE.md
+ * @copyright	Copyright (c) 2016 Tom Flidr (https://github.com/mvccore)
+ * @license		https://mvccore.github.io/docs/mvccore/5.0.0/LICENCE.md
  */
 
 namespace MvcCore\Ext;
@@ -16,24 +16,24 @@ namespace MvcCore\Ext;
 /**
  * Responsibility - create authentication module by loaded (existing) classes.
  */
-class Auth extends \MvcCore\Ext\Auths\Basic
-{
+class Auth extends \MvcCore\Ext\Auths\Basic {
+
 	/**
 	 * MvcCore Extension - Auth - version:
 	 * Comparison by PHP function version_compare();
 	 * @see http://php.net/manual/en/function.version-compare.php
 	 */
-	const VERSION = '5.0.0-alpha';
+	const VERSION = '5.0.0';
 
 	/**
 	 * Full authentication module type with all features.
 	 */
-	const AUTH_CLASS_FULL = '\MvcCore\Ext\Auths\Full';
+	const AUTH_CLASS_FULL = '\\MvcCore\\Ext\\Auths\\Full';
 
 	/**
 	 * Basic authentication module type with signin/signout form, system config user or database user only.
 	 */
-	const AUTH_CLASS_BASIC = '\MvcCore\Ext\Auths\Basic';
+	const AUTH_CLASS_BASIC = '\\MvcCore\\Ext\\Auths\\Basic';
 
 	/**
 	 * Authentication module type. Possible values: `NULL | "full" | "basic"`.
@@ -63,12 +63,12 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	}
 
 	/**
-	 * Set authentication module full class name implementing `\MvcCore\Ext\Auths\Basics\IAuth`.
+	 * Set authentication module full class name implementing `\MvcCore\Ext\Auths\IBasic`.
 	 * @return string|NULL
 	 */
 	public static function SetAuthClass ($authClass) {
 		$toolClass = \MvcCore\Application::GetInstance()->GetToolClass();
-		if ($toolClass::CheckClassInterface($authClass, 'MvcCore\Ext\Auths\Basics\IAuth', TRUE, TRUE)) 
+		if ($toolClass::CheckClassInterface($authClass, 'MvcCore\\Ext\\Auths\\IBasic', TRUE, TRUE)) 
 			self::$authClass = $authClass;
 	}
 
@@ -80,7 +80,7 @@ class Auth extends \MvcCore\Ext\Auths\Basic
 	 * - `\MvcCore\Ext\Auths\Basic`	- always loaded
 	 * @param array $configuration Optional configuration passed into method
 	 *							 `\MvcCore\Ext\Auths\Basic::__construct($configuration)`.
-	 * @return \MvcCore\Ext\Auths\Full|\MvcCore\Ext\Auths\Basic|\MvcCore\Ext\Auths\Basics\IAuth
+	 * @return \MvcCore\Ext\Auths\Full|\MvcCore\Ext\Auths\Basic
 	 */
 	public static function GetInstance ($configuration = []) {
 		if (self::$instance === NULL) {
