@@ -3,25 +3,25 @@
 	"type": "library",
 	"description": "MvcCore - Extension - Auth - authentication module with automatic authentication module type detection by loaded classes.",
 	"keywords": [
-		"mvc", 
-		"mvccore", 
-		"framework", 
-		"extension", 
-		"plugin", 
-		"plug-in", 
-		"ext", 
-		"auth", 
-		"authentication", 
-		"authorization", 
-		"authenticate", 
-		"user", 
-		"signin", 
-		"signout", 
-		"login", 
-		"logout", 
-		"sign in", 
-		"sign out", 
-		"log in", 
+		"mvc",
+		"mvccore",
+		"framework",
+		"extension",
+		"plugin",
+		"plug-in",
+		"ext",
+		"auth",
+		"authentication",
+		"authorization",
+		"authenticate",
+		"user",
+		"signin",
+		"signout",
+		"login",
+		"logout",
+		"sign in",
+		"sign out",
+		"log in",
 		"log out"
 	],
 	"license": ["BSD-3-Clause"],
@@ -31,11 +31,13 @@
 	}],
 	"require": {
 		"php": ">=5.4.0",
-		"mvccore/mvccore": "dev-master",
-		"mvccore/ext-auth-basic": "dev-master"
+		"mvccore/mvccore": "^5.0",
+		"mvccore/ext-auth-basic": "^5.0"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"classmap": [
+			"src/"
+		]
 	},
 	"minimum-stability": "dev"
 }
