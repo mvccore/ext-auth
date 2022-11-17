@@ -31,8 +31,8 @@
 	}],
 	"require": {
 		"php": ">=5.4.0",
-		"mvccore/mvccore": "^5.0",
-		"mvccore/ext-auth-basic": "^5.0"
+		"mvccore/mvccore": "^5.2",
+		"mvccore/ext-auth-basic": "^5.2"
 	},
 	"autoload": {
 		"classmap": [
