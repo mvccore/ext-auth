@@ -61,7 +61,7 @@ For any forms CSRF errors - you can call in base controller `Init()` action:
 	public function Init() {
 		parent::Init();
 		// when any CSRF token is outdated or not the same - sign out user by default
-		\MvcCore\Ext\Form::AddCsrfErrorHandler(function (\MvcCore\Ext\Form & $form, $errorMsg) {
+		$this->application->AddSecurityErrorHandler(function (\MvcCore\IRequest $req, \MvcCore\IResponse $res, ?\MvcCore\Ext\Form $form = NULL) {
 			\MvcCore\Ext\Auth\User::LogOut();
 			self::Redirect($this->Url(
 				'Index:Index',
